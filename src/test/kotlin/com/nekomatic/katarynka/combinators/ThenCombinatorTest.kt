@@ -5,7 +5,6 @@ import arrow.core.Tuple2
 import com.nekomatic.katarynka.core.Failure
 import com.nekomatic.katarynka.core.Input
 import com.nekomatic.katarynka.core.Success
-import com.nekomatic.katarynka.core.parse
 import com.nekomatic.katarynka.parsers.ItemParser
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue

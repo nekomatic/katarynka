@@ -4,7 +4,6 @@ import arrow.core.Either
 import com.nekomatic.katarynka.core.Failure
 import com.nekomatic.katarynka.core.Input
 import com.nekomatic.katarynka.core.Success
-import com.nekomatic.katarynka.core.parse
 import com.nekomatic.katarynka.parsers.MatchParser
 import org.junit.jupiter.api.Test
 

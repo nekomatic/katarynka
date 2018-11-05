@@ -22,12 +22,30 @@
  * THE SOFTWARE.
  ******************************************************************************/
 
-@file:JvmName("OneOrMore")
+@file:JvmName("OrElse")
 
 package com.nekomatic.katarynka.combinators
 
+import arrow.core.Either
 import com.nekomatic.katarynka.core.IInput
+import com.nekomatic.katarynka.core.parserResult
 import com.nekomatic.katarynka.parsers.Parser
 
-fun <TItem : Any, TIn, A : Any> Parser<TItem, TIn, A>.oneOrMore(): Parser<TItem, TIn, List<A>> where TIn : IInput<TItem, TIn> =
-        this then this.zeroOrMore() map { s -> listOf(s.a) + s.b } name this.name
+
+infix fun <TItem : Any, TIn, A : Any> Parser<TItem, TIn, A>.orElse(thatParser: Parser<TItem, TIn, A>): Parser<TItem, TIn, A>
+        where TIn : IInput<TItem, TIn> {
+
+    fun f(input: TIn, name: () -> String): parserResult<TItem, TIn, out A> {
+        val r1 = this.parserFunction(input, name)
+        return when (r1) {
+            is Either.Right -> r1
+            else -> thatParser.parserFunction(input, name)
+        }
+    }
+
+    return Parser(
+            name = { "${this.name} or ${thatParser.name}" },
+            parserFunction = { input, name -> f(input, name) })
+}
+
+

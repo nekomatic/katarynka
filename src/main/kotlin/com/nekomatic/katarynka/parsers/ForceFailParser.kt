@@ -22,12 +22,14 @@
  * THE SOFTWARE.
  ******************************************************************************/
 
-@file:JvmName("OneOrMore")
+package com.nekomatic.katarynka.parsers
 
-package com.nekomatic.katarynka.combinators
-
+import arrow.core.left
+import com.nekomatic.katarynka.core.Failure
 import com.nekomatic.katarynka.core.IInput
-import com.nekomatic.katarynka.parsers.Parser
 
-fun <TItem : Any, TIn, A : Any> Parser<TItem, TIn, A>.oneOrMore(): Parser<TItem, TIn, List<A>> where TIn : IInput<TItem, TIn> =
-        this then this.zeroOrMore() map { s -> listOf(s.a) + s.b } name this.name
+open class ForceFailParser<TItem : Any, TIn, A : Any>(name: () -> String)
+    : Parser<TItem, TIn, A>(
+        name = name,
+        parserFunction = { input, n -> Failure<TItem, TIn>(name, input, input).left() }
+) where TIn : IInput<TItem, TIn>

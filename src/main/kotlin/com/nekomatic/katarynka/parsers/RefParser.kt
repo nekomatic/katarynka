@@ -22,12 +22,36 @@
  * THE SOFTWARE.
  ******************************************************************************/
 
-@file:JvmName("OneOrMore")
-
-package com.nekomatic.katarynka.combinators
+package com.nekomatic.katarynka.parsers
 
 import com.nekomatic.katarynka.core.IInput
-import com.nekomatic.katarynka.parsers.Parser
+import com.nekomatic.katarynka.core.parserResult
+import kotlinx.coroutines.CoroutineStart
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.async
+import kotlinx.coroutines.runBlocking
 
-fun <TItem : Any, TIn, A : Any> Parser<TItem, TIn, A>.oneOrMore(): Parser<TItem, TIn, List<A>> where TIn : IInput<TItem, TIn> =
-        this then this.zeroOrMore() map { s -> listOf(s.a) + s.b } name this.name
+class RefParser<TItem : Any, TIn, A : Any>() : ForceFailParser<TItem, TIn, A>({ "Reference parser not initialised" }) where TIn : IInput<TItem, TIn> {
+
+    private var innerParser: Parser<TItem, TIn, A> = this
+
+    fun set(p: Parser<TItem, TIn, A>): Parser<TItem, TIn, A> {
+        innerParser = p
+        return runBlocking { parser.await() }
+    }
+
+    private val parser by lazy {
+        GlobalScope.async(start = CoroutineStart.LAZY) { innerParser }
+    }
+
+    override suspend fun parseAsync(input: TIn): parserResult<TItem, TIn, out A> {
+        val p = this.parser.await()
+        return p.parserFunction(input, p.name)
+    }
+
+    override fun parse(input: TIn): parserResult<TItem, TIn, out A> {
+        val t = this
+        val p = runBlocking { t.parser.await() }
+        return p.parserFunction(input, p.name)
+    }
+}

@@ -6,10 +6,8 @@ import arrow.core.Option
 import arrow.core.Some
 import com.nekomatic.katarynka.core.Input
 import com.nekomatic.katarynka.core.Success
-import com.nekomatic.katarynka.core.parse
 import com.nekomatic.katarynka.parsers.ItemParser
 import org.junit.jupiter.api.Test
-
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.assertAll

@@ -3,7 +3,6 @@ package com.nekomatic.katarynka.combinators
 import arrow.core.Either
 import com.nekomatic.katarynka.core.Input
 import com.nekomatic.katarynka.core.Success
-import com.nekomatic.katarynka.core.parse
 import com.nekomatic.katarynka.parsers.ItemParser
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.DisplayName
