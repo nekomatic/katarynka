@@ -38,7 +38,7 @@ internal class CombinatorTest {
     @DisplayName("Name combinator")
     @Test
     fun name() {
-        val named = parser name { "Char 'a'" }
+        val named = parser rename { "Char 'a'" }
         val input = Input.create(textB.iterator())
         val result = named.parse(input)
         assertAll(

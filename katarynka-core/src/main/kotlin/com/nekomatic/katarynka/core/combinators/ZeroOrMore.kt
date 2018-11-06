@@ -26,7 +26,7 @@
 
 package com.nekomatic.katarynka.core.combinators
 
-import arrow.core.right
+import arrow.core.*
 import com.nekomatic.katarynka.core.input.IInput
 import com.nekomatic.katarynka.core.result.Success
 import com.nekomatic.katarynka.core.parsers.Parser
@@ -45,3 +45,4 @@ fun <TItem : Any, TIn, A : Any> Parser<TItem, TIn, A>.zeroOrMore(): Parser<TItem
                         )
                     }.right()
         })
+

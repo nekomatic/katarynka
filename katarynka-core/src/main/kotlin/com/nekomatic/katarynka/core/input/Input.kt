@@ -29,7 +29,7 @@ import arrow.core.Option
 import arrow.core.Some
 import arrow.core.some
 
-class Input<TItem : Any> private constructor(
+open class Input<TItem : Any> protected constructor(
         override val item: Option<TItem>,
         override val position: Long,
         private val iterator: Iterator<TItem>

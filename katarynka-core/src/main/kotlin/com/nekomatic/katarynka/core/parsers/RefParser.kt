@@ -31,27 +31,20 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.runBlocking
 
-class RefParser<TItem : Any, TIn, A : Any>() : ForceFailParser<TItem, TIn, A>({ "Reference parser not initialised" }) where TIn : IInput<TItem, TIn> {
+class RefParser<TItem : Any, TIn, A : Any>() : ForceFailParser<TItem, TIn, A>({ "Reference parser not initialized" }) where TIn : IInput<TItem, TIn> {
 
     private var innerParser: Parser<TItem, TIn, A> = this
 
     fun set(p: Parser<TItem, TIn, A>): Parser<TItem, TIn, A> {
         innerParser = p
-        return runBlocking { parser.await() }
+        return parser
     }
 
-    private val parser by lazy {
-        GlobalScope.async(start = CoroutineStart.LAZY) { innerParser }
-    }
-
-    override suspend fun parseAsync(input: TIn): parserResult<TItem, TIn, out A> {
-        val p = this.parser.await()
-        return p.parserFunction(input, p.name)
-    }
+    private val parser by lazy { innerParser }
 
     override fun parse(input: TIn): parserResult<TItem, TIn, out A> {
         val t = this
-        val p = runBlocking { t.parser.await() }
+        val p = t.parser
         return p.parserFunction(input, p.name)
     }
 }

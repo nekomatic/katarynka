@@ -1,0 +1,27 @@
+package com.nekomatic.katarynka.chars
+
+import com.nekomatic.katarynka.core.combinators.orElse
+import com.nekomatic.katarynka.core.combinators.rename
+import com.nekomatic.katarynka.core.combinators.then
+import com.nekomatic.katarynka.core.combinators.toConst
+import com.nekomatic.katarynka.core.input.Input
+import com.nekomatic.katarynka.core.input.LineInput
+import com.nekomatic.katarynka.core.parsers.ItemParser
+import com.nekomatic.katarynka.core.parsers.Parser
+import com.nekomatic.katarynka.core.result.Success
+
+typealias CInput = LineInput<Char>
+
+//TODO: Create tests
+fun CInput.create(iterator: Iterator<Char>): CInput = LineInput.create(
+        iterator = iterator,
+        eolParser = Parser(
+                name = { "eol" },
+                parserFunction = { i, _ ->
+                    val eol = ((ItemParser<Char, Input<Char>>('\r') then ItemParser<Char, Input<Char>>('\n')).toConst('\n')
+                            orElse ItemParser<Char, Input<Char>>('\n')
+                            orElse ItemParser<Char, Input<Char>>('\r')) rename { "end of line" }
+                    eol.parse(i).map { Success(it.payload().size.toLong() - 1, it.startingInput, it.remainingInput, it.payload) }
+                }
+        )
+)

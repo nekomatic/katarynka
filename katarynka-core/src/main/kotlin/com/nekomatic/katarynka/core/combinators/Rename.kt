@@ -22,15 +22,15 @@
  * THE SOFTWARE.
  ******************************************************************************/
 
-@file:JvmName("Name")
+@file:JvmName("Rename")
 
 package com.nekomatic.katarynka.core.combinators
 
 import com.nekomatic.katarynka.core.input.IInput
 import com.nekomatic.katarynka.core.parsers.Parser
 
-infix fun <TItem : Any, TIn, A : Any> Parser<TItem, TIn, A>.name(name: String): Parser<TItem, TIn, A> where TIn : IInput<TItem, TIn> =
+infix fun <TItem : Any, TIn, A : Any> Parser<TItem, TIn, A>.rename(name: String): Parser<TItem, TIn, A> where TIn : IInput<TItem, TIn> =
         Parser({ name }, this.parserFunction)
 
-infix fun <TItem : Any, TIn, A : Any> Parser<TItem, TIn, A>.name(name: () -> String): Parser<TItem, TIn, A> where TIn : IInput<TItem, TIn> =
+infix fun <TItem : Any, TIn, A : Any> Parser<TItem, TIn, A>.rename(name: () -> String): Parser<TItem, TIn, A> where TIn : IInput<TItem, TIn> =
         Parser(name, this.parserFunction)

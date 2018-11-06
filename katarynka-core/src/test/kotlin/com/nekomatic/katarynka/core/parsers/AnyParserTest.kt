@@ -30,7 +30,7 @@ internal class AnyParserTest {
                 },
                 {
                     assertEquals((result as Either.Left<Failure<Char, Input<Char>>>).a.expected(), { "any" }())
-                    { "Expected of a failed AnyParser should be the value of parser's name" }
+                    { "Expected of a failed AnyParser should be the value of parser's rename" }
                 },
                 {
                     assertEquals(input.position, (result as Either.Left<Failure<Char, Input<Char>>>).a.remainingInput.position)

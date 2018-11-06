@@ -31,7 +31,7 @@ internal class OneOrMoreCombinatorTest {
                 },
                 {
                     assertEquals((result as Either.Left<Failure<Char, Input<Char>>>).a.expected(), { "a" }())
-                    { "Expected of a failed OneOrMore parser should be the value of parser's name" }
+                    { "Expected of a failed OneOrMore parser should be the value of parser's rename" }
                 },
                 {
                     assertEquals((result as Either.Left<Failure<Char, Input<Char>>>).a.remainingInput.position, result.a.startingInput.position)
@@ -98,7 +98,7 @@ internal class OneOrMoreCombinatorTest {
                 },
                 {
                     assertEquals((result as Either.Left<Failure<Char, Input<Char>>>).a.expected(), { "a" }())
-                    { "Expected of a failed OneOrMore parser should be the value of parser's name" }
+                    { "Expected of a failed OneOrMore parser should be the value of parser's rename" }
                 },
                 {
                     assertEquals((result as Either.Left<Failure<Char, Input<Char>>>).a.remainingInput.position, result.a.startingInput.position)

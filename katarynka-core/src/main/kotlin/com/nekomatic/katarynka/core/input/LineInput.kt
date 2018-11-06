@@ -25,6 +25,7 @@
 package com.nekomatic.katarynka.core.input
 
 import arrow.core.*
+import com.nekomatic.katarynka.core.parsers.ForceFailParser
 import com.nekomatic.katarynka.core.parsers.Parser
 
 
@@ -43,6 +44,13 @@ class LineInput<TItem : Any> private constructor(
                         baseInput = Input.create(iterator),
                         eolParser = eolParser
                 )
+
+        fun <TItem : Any> create(iterator: Iterator<TItem>): LineInput<TItem> =
+                LineInput(
+                        baseInput = Input.create(iterator),
+                        eolParser = ForceFailParser { "eol" }
+                )
+
     }
 
     override val item = baseInput.item

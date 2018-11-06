@@ -67,24 +67,27 @@ internal class RefParserTest {
     @Test
     fun basicTest() {
         val input = Input.create(text0.iterator())
-        val result = runBlocking { parser.parseAsync(input) }
+//        val result = runBlocking { parser.parseAsync(input) }
+        val x =   parser.parse(input)
 //        val expected = if (result is Either.Left) result.a.expected() else ""
-        assertTrue(result is Either.Right)
+        assertTrue(x is Either.Right)
     }
 
     @Test
     fun singleTest() {
         val input = Input.create(text1.iterator())
-        val result = runBlocking { parser.parseAsync(input) }
+//        val result = runBlocking { parser.parseAsync(input) }
+        val x =   parser.parse(input)
 //        val expected = if (result is Either.Left) result.a.expected() else ""
-        assertTrue(result is Either.Right)
+        assertTrue(x is Either.Right)
     }
 
     @Test
     fun doubleTest() {
         val input = Input.create(text2.iterator())
-        val result = runBlocking { parser.parseAsync(input) }
+//        val result = runBlocking { parser.parseAsync(input) }
+        val x =   parser.parse(input)
 //        val expected = if (result is Either.Left) result.a.expected() else ""
-        assertTrue(result is Either.Right)
+        assertTrue(x is Either.Right)
     }
 }
