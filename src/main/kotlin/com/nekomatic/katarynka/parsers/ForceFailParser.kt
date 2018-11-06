@@ -31,5 +31,5 @@ import com.nekomatic.katarynka.core.IInput
 open class ForceFailParser<TItem : Any, TIn, A : Any>(name: () -> String)
     : Parser<TItem, TIn, A>(
         name = name,
-        parserFunction = { input, n -> Failure<TItem, TIn>(name, input, input).left() }
+        parserFunction = { input, _ -> Failure<TItem, TIn>(name, input, input).left() }
 ) where TIn : IInput<TItem, TIn>

@@ -52,7 +52,7 @@ class EParser() {
     val elementParser by lazy { pBranch orElse pLeaf }
 
     init {
-        val p = runBlocking { elementRef.set(elementParser) }
+        runBlocking { elementRef.set(elementParser) }
     }
 }
 
@@ -68,7 +68,7 @@ internal class RefParserTest {
     fun basicTest() {
         val input = Input.create(text0.iterator())
         val result = runBlocking { parser.parseAsync(input) }
-        val expected = if (result is Either.Left) result.a.expected() else ""
+//        val expected = if (result is Either.Left) result.a.expected() else ""
         assertTrue(result is Either.Right)
     }
 
@@ -76,7 +76,7 @@ internal class RefParserTest {
     fun singleTest() {
         val input = Input.create(text1.iterator())
         val result = runBlocking { parser.parseAsync(input) }
-        val expected = if (result is Either.Left) result.a.expected() else ""
+//        val expected = if (result is Either.Left) result.a.expected() else ""
         assertTrue(result is Either.Right)
     }
 
@@ -84,7 +84,7 @@ internal class RefParserTest {
     fun doubleTest() {
         val input = Input.create(text2.iterator())
         val result = runBlocking { parser.parseAsync(input) }
-        val expected = if (result is Either.Left) result.a.expected() else ""
+//        val expected = if (result is Either.Left) result.a.expected() else ""
         assertTrue(result is Either.Right)
     }
 }
