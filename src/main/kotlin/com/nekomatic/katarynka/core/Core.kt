@@ -27,7 +27,9 @@
 package com.nekomatic.katarynka.core
 
 import arrow.core.*
-import com.nekomatic.katarynka.parsers.Parser
+import com.nekomatic.katarynka.core.input.IInput
+import com.nekomatic.katarynka.core.result.Failure
+import com.nekomatic.katarynka.core.result.Success
 
 typealias genericParser<TItem, TIn, A> = (TIn, () -> String) -> parserResult<TItem, TIn, out A>
 
