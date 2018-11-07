@@ -1,7 +1,7 @@
 /*******************************************************************************
  * The MIT License
  *
- * Copyright (c) 2018 nekomatic.
+ * Copyright (c) 2018. nekomatic.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -30,31 +30,41 @@ import arrow.core.Some
 import com.nekomatic.katarynka.core.parsers.ForceFailParser
 import com.nekomatic.katarynka.core.parsers.Parser
 
-//TODO: change eolParser to option and disable eol detection when none
-//TODO: modify LineInput and Input to allow building common parsers
-
-//eolParser must return distance from the current item to the last item of the line break sequence
 class LineInput<TItem : Any> private constructor(
         private val baseInput: Input<TItem>,
         override val line: Long = 1,
         override val column: Long = 1,
         private val lastKnownEolPosition: Long = -1,
-        val eolParser: Parser<TItem, Input<TItem>, Long>
+        val eolParser: Parser<TItem, Input<TItem>, Long>,
+        private val ignoreEolParser: Boolean = false
 ) : ILineInput<TItem, LineInput<TItem>> {
 
     companion object {
+        /**
+         * Creates instance of the parser input with line counter enabled
+         * @param iterator Iterator<TItem>
+         * @param eolParser Parser<TItem, Input<TItem>, Long> parser used to detect the end of line.
+         * The returned value shoul dintcate the ddistance from the current item to the last item of the line break sequence
+         * @return LineInput<TItem>
+         */
         fun <TItem : Any> create(iterator: Iterator<TItem>, eolParser: Parser<TItem, Input<TItem>, Long>): LineInput<TItem> =
                 LineInput(
                         baseInput = Input.create(iterator),
                         eolParser = eolParser
                 )
 
+        /**
+         * Creates instance of the parser input with line counter disabled
+         * @param iterator Iterator<TItem>
+         * @return LineInput<TItem>
+         */
         fun <TItem : Any> create(iterator: Iterator<TItem>): LineInput<TItem> =
                 LineInput(
                         baseInput = Input.create(iterator),
-                        eolParser = ForceFailParser { "eol" }
+                        eolParser = ForceFailParser { "eol" },
+                        ignoreEolParser = true,
+                        lastKnownEolPosition = 1
                 )
-
     }
 
     override val item = baseInput.item
@@ -80,7 +90,7 @@ class LineInput<TItem : Any> private constructor(
                         baseInput = baseInput.next,
                         line = if (newLastKnownEolPosition == position) line + 1 else line,
                         column = if (newLastKnownEolPosition == position) 1 else column + 1,
-                        lastKnownEolPosition = newLastKnownEolPosition,
+                        lastKnownEolPosition = if (ignoreEolParser) lastKnownEolPosition + 1 else newLastKnownEolPosition,
                         eolParser = eolParser
                 )
             }
