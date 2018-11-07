@@ -24,10 +24,14 @@
 
 package com.nekomatic.katarynka.core.input
 
-import arrow.core.*
+import arrow.core.Either
+import arrow.core.None
+import arrow.core.Some
 import com.nekomatic.katarynka.core.parsers.ForceFailParser
 import com.nekomatic.katarynka.core.parsers.Parser
 
+//TODO: change eolParser to option and disable eol detection when none
+//TODO: modify LineInput and Input to allow building common parsers
 
 //eolParser must return distance from the current item to the last item of the line break sequence
 class LineInput<TItem : Any> private constructor(
