@@ -1,3 +1,5 @@
+@file:JvmName("CInput")
+
 package com.nekomatic.katarynka.chars
 
 import com.nekomatic.katarynka.core.combinators.orElse
@@ -12,16 +14,12 @@ import com.nekomatic.katarynka.core.result.Success
 
 typealias CInput = LineInput<Char>
 
-//TODO: Create tests
-fun CInput.create(iterator: Iterator<Char>): CInput = LineInput.create(
-        iterator = iterator,
-        eolParser = Parser(
-                name = { "eol" },
-                parserFunction = { i, _ ->
-                    val eol = ((ItemParser<Char, Input<Char>>('\r') then ItemParser<Char, Input<Char>>('\n')).toConst('\n')
-                            orElse ItemParser<Char, Input<Char>>('\n')
-                            orElse ItemParser<Char, Input<Char>>('\r')) rename { "end of line" }
-                    eol.parse(i).map { Success(it.payload().size.toLong() - 1, it.startingInput, it.remainingInput, it.payload) }
-                }
-        )
+val CInputEolParser = Parser(
+        name = { "eol" },
+        parserFunction = { i: Input<Char>, _ ->
+            val eol = ((ItemParser<Char, Input<Char>>('\r') then ItemParser<Char, Input<Char>>('\n')).toConst('\n')
+                    orElse ItemParser<Char, Input<Char>>('\n')
+                    orElse ItemParser<Char, Input<Char>>('\r')) rename { "end of line" }
+            eol.parse(i).map { Success(it.payload().size.toLong() - 1, it.startingInput, it.remainingInput, it.payload) }
+        }
 )

@@ -39,8 +39,8 @@ import org.junit.jupiter.api.assertAll
 internal class SequenceTest {
 
 
-    private val textABCD = "abcd".toList()
-    private val textAB_D = "ab_d".toList()
+    private val textABCD = "abcde".toList()
+    private val textAB_D = "ab_de".toList()
 
     private val parser = "abcd".map { ItemParser<Char, Input<Char>>(it) }.sequence().map { it.joinToString("") }
 
@@ -54,7 +54,7 @@ internal class SequenceTest {
                 { assertTrue(result is Either.Right<*>, "result should be Either.Right") },
                 {
                     assertEquals(
-                            textABCD,
+                            "abcd".toList(),
                             (result as Either.Right<Success<Char, Input<Char>, String>>).b.value.toList(),
                             "the result value should be equal to the requested items sequence"
                     )

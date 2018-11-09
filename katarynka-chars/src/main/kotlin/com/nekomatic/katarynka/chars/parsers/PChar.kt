@@ -1,3 +1,4 @@
+@file:JvmName("PChar")
 package com.nekomatic.katarynka.chars.parsers
 
 import com.nekomatic.katarynka.chars.CInput

@@ -31,6 +31,8 @@ import com.nekomatic.katarynka.core.input.IInput
 import com.nekomatic.katarynka.core.result.Failure
 import com.nekomatic.katarynka.core.result.Success
 
+//TODO: create combinator 'listWithSeparator'
+
 typealias genericParser<TItem, TIn, A> = (TIn, () -> String) -> parserResult<TItem, TIn, out A>
 
 

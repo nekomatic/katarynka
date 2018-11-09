@@ -34,7 +34,7 @@ import com.nekomatic.katarynka.core.result.Success
 import com.nekomatic.katarynka.core.input.IInput
 import com.nekomatic.katarynka.core.parsers.Parser
 
-
+//TODO: create tests
 infix fun <TItem : Any, TIn, A : Any, B : Any> Parser<TItem, TIn, A>.then(thatParser: Parser<TItem, TIn, B>): Parser<TItem, TIn, Tuple2<A, B>>
         where TIn : IInput<TItem, TIn> {
     val thisParser = this
@@ -59,3 +59,5 @@ infix fun <TItem : Any, TIn, A : Any, B : Any> Parser<TItem, TIn, A>.then(thatPa
             name = { this.name() + thatParser.name() },
             parserFunction = { input, name -> f(input, name) })
 }
+
+

@@ -35,7 +35,7 @@ class RefParser<TItem : Any, TIn, A : Any>() : ForceFailParser<TItem, TIn, A>({ 
 
     private var innerParser: Parser<TItem, TIn, A> = this
 
-    fun set(p: Parser<TItem, TIn, A>): Parser<TItem, TIn, A> {
+    public fun set(p: Parser<TItem, TIn, A>): Parser<TItem, TIn, A> {
         innerParser = p
         return parser
     }

@@ -12,7 +12,7 @@
     <artifactId>samples</artifactId>
     <packaging>pom</packaging>
     <modules>
-        <!--<module>samples-json</module>-->
+        <module>samples-json</module>
     </modules>
 
 </project>

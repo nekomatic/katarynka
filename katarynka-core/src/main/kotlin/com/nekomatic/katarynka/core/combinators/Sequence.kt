@@ -50,3 +50,4 @@ fun <TItem : Any, TIn, A : Any> List<Parser<TItem, TIn, A>>.sequence(): Parser<T
             name = { this.joinToString("") { it.name() } },
             parserFunction = { input, name -> f(input, name) })
 }
+
