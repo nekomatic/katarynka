@@ -32,7 +32,13 @@ import com.nekomatic.katarynka.core.input.IInput
 import com.nekomatic.katarynka.core.parsers.Parser
 import com.nekomatic.katarynka.core.result.Failure
 
-
+//TODO: create documentation
+/**
+ *
+ * @receiver Parser<TItem, TIn, A>
+ * @param f (A) -> Boolean
+ * @return Parser<TItem, TIn, A>
+ */
 infix fun <TItem : Any, TIn, A : Any> Parser<TItem, TIn, A>.onlyIf(f: (A) -> Boolean): Parser<TItem, TIn, A> where TIn : IInput<TItem, TIn> =
         Parser(name, { input, n ->
             this.parse(input)

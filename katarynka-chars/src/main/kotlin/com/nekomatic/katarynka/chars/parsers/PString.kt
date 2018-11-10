@@ -9,6 +9,11 @@ import com.nekomatic.katarynka.core.input.ILineInput
 import com.nekomatic.katarynka.core.input.LineInput
 import com.nekomatic.katarynka.core.parsers.Parser
 
+//TODO: create documentation
+/**
+ *
+ * @constructor
+ */
 class PString(value: String) : Parser<Char, LineInput<Char>, String>
 (
         name = { value },

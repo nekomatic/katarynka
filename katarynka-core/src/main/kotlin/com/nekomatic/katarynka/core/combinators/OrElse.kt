@@ -31,7 +31,13 @@ import com.nekomatic.katarynka.core.input.IInput
 import com.nekomatic.katarynka.core.parserResult
 import com.nekomatic.katarynka.core.parsers.Parser
 
-
+//TODO: create documentation
+/**
+ *
+ * @receiver Parser<TItem, TIn, A>
+ * @param thatParser Parser<TItem, TIn, A>
+ * @return Parser<TItem, TIn, A>
+ */
 infix fun <TItem : Any, TIn, A : Any> Parser<TItem, TIn, A>.orElse(thatParser: Parser<TItem, TIn, A>): Parser<TItem, TIn, A>
         where TIn : IInput<TItem, TIn> {
 

@@ -30,6 +30,21 @@ import arrow.core.Some
 import com.nekomatic.katarynka.core.parsers.ForceFailParser
 import com.nekomatic.katarynka.core.parsers.Parser
 
+//TODO: create documentation
+/**
+ *
+ * @param TItem : Any
+ * @property baseInput Input<TItem>
+ * @property line Long
+ * @property column Long
+ * @property lastKnownEolPosition Long
+ * @property eolParser Parser<TItem, Input<TItem>, Long>
+ * @property ignoreEolParser Boolean
+ * @property item Option<TItem>
+ * @property position Long
+ * @property next LineInput<TItem>
+ * @constructor
+ */
 class LineInput<TItem : Any> private constructor(
         private val baseInput: Input<TItem>,
         override val line: Long = 1,

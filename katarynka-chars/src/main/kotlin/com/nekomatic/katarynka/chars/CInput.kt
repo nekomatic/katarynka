@@ -14,6 +14,7 @@ import com.nekomatic.katarynka.core.result.Success
 
 typealias CInput = LineInput<Char>
 
+
 val CInputEolParser = Parser(
         name = { "eol" },
         parserFunction = { i: Input<Char>, _ ->

@@ -37,7 +37,12 @@ import com.nekomatic.katarynka.core.parsers.Parser
 import com.nekomatic.katarynka.core.result.Failure
 import com.nekomatic.katarynka.core.result.Success
 
-
+//TODO: create documentation
+/**
+ *
+ * @receiver List<Parser<TItem, TIn, A>>
+ * @return Parser<TItem, TIn, List<A>>
+ */
 fun <TItem : Any, TIn, A : Any> List<Parser<TItem, TIn, A>>.sequence(): Parser<TItem, TIn, List<A>> where TIn : IInput<TItem, TIn> {
     fun f(input: TIn, name: () -> String): parserResult<TItem, TIn, List<A>> =
             this.foldM(Either.monadError(), Success<TItem, TIn, List<A>>(listOf(), input, input) { listOf() })

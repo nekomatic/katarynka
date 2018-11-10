@@ -5,6 +5,12 @@ import com.nekomatic.katarynka.core.input.IInput
 import com.nekomatic.katarynka.core.result.Success
 
 //TODO: Create tests
+//TODO: create documentation
+/**
+ *
+ * @param TItem : Any
+ * @param TIn
+ */
 open class ForceSuccessParser<TItem : Any, TIn>()
     : Parser<TItem, TIn, Unit>(
         name = { "success" },

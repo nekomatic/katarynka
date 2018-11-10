@@ -28,11 +28,16 @@ package com.nekomatic.katarynka.core.combinators
 
 import arrow.core.*
 import com.nekomatic.katarynka.core.input.IInput
-import com.nekomatic.katarynka.core.map
+import com.nekomatic.katarynka.core.result.map
 import com.nekomatic.katarynka.core.parsers.Parser
 import com.nekomatic.katarynka.core.result.Success
 
-
+//TODO: create documentation
+/**
+ *
+ * @receiver Parser<TItem, TIn, A>
+ * @return Parser<TItem, TIn, Option<A>>
+ */
 fun <TItem : Any, TIn, A : Any> Parser<TItem, TIn, A>.optional(): Parser<TItem, TIn, Option<A>> where TIn : IInput<TItem, TIn> {
 
 

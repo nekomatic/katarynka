@@ -31,6 +31,15 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.runBlocking
 
+//TODO: create documentation
+/**
+ *
+ * @param TItem : Any
+ * @param TIn
+ * @param A : Any
+ * @property innerParser Parser<TItem, TIn, A>
+ * @property parser Parser<TItem, TIn, A>
+ */
 class RefParser<TItem : Any, TIn, A : Any>() : ForceFailParser<TItem, TIn, A>({ "Reference parser not initialized" }) where TIn : IInput<TItem, TIn> {
 
     private var innerParser: Parser<TItem, TIn, A> = this
@@ -41,7 +50,11 @@ class RefParser<TItem : Any, TIn, A : Any>() : ForceFailParser<TItem, TIn, A>({ 
     }
 
     private val parser by lazy { innerParser }
-
+    /**
+     *
+     * @param input TIn
+     * @return parserResult<TItem, TIn, out A>
+     */
     override fun parse(input: TIn): parserResult<TItem, TIn, out A> {
         val t = this
         val p = t.parser

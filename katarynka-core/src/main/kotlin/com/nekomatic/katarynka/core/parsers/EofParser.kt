@@ -27,8 +27,12 @@ package com.nekomatic.katarynka.core.parsers
 import com.nekomatic.katarynka.core.EOF
 import com.nekomatic.katarynka.core.input.IInput
 import com.nekomatic.katarynka.core.eofParserFunction
-
-
+//TODO: create documentation
+/**
+ *
+ * @param TItem : Any
+ * @param TIn
+ */
 open class EofParser<TItem : Any, TIn>
     : Parser<TItem, TIn, EOF>({ "eof" }, { input, n -> eofParserFunction(input, n) })
         where TIn : IInput<TItem, TIn>

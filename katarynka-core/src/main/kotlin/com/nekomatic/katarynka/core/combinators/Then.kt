@@ -35,6 +35,13 @@ import com.nekomatic.katarynka.core.input.IInput
 import com.nekomatic.katarynka.core.parsers.Parser
 
 //TODO: create tests
+//TODO: create documentation
+/**
+ *
+ * @receiver Parser<TItem, TIn, A>
+ * @param thatParser Parser<TItem, TIn, B>
+ * @return Parser<TItem, TIn, Tuple2<A, B>>
+ */
 infix fun <TItem : Any, TIn, A : Any, B : Any> Parser<TItem, TIn, A>.then(thatParser: Parser<TItem, TIn, B>): Parser<TItem, TIn, Tuple2<A, B>>
         where TIn : IInput<TItem, TIn> {
     val thisParser = this

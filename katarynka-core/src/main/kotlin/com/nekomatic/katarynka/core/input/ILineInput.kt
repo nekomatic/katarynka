@@ -24,6 +24,14 @@
 
 package com.nekomatic.katarynka.core.input
 
+//TODO: create documentation
+/**
+ *
+ * @param TItem : Any
+ * @param out TIn
+ * @property line Long
+ * @property column Long
+ */
 interface ILineInput<TItem : Any, out TIn> : IInput<TItem, TIn> where TIn : ILineInput<TItem, TIn> {
     val line: Long
     val column: Long

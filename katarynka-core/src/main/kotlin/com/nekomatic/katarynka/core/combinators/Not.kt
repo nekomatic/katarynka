@@ -34,7 +34,12 @@ import com.nekomatic.katarynka.core.result.Success
 import com.nekomatic.katarynka.core.parsers.AnyParser
 import com.nekomatic.katarynka.core.parsers.Parser
 
-
+//TODO: create documentation
+/**
+ *
+ * @receiver Parser<TItem, TIn, A>
+ * @return Parser<TItem, TIn, TItem>
+ */
 fun <TItem : Any, TIn, A : Any> Parser<TItem, TIn, A>.not(): Parser<TItem, TIn, TItem> where TIn : IInput<TItem, TIn> =
         Parser(
                 name = name,

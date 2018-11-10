@@ -29,8 +29,21 @@ package com.nekomatic.katarynka.core.combinators
 import com.nekomatic.katarynka.core.input.IInput
 import com.nekomatic.katarynka.core.parsers.Parser
 
+//TODO: create documentation
+/**
+ *
+ * @receiver Parser<TItem, TIn, A>
+ * @param name String
+ * @return Parser<TItem, TIn, A>
+ */
 infix fun <TItem : Any, TIn, A : Any> Parser<TItem, TIn, A>.rename(name: String): Parser<TItem, TIn, A> where TIn : IInput<TItem, TIn> =
         Parser({ name }, this.parserFunction)
-
+//TODO: create documentation
+/**
+ *
+ * @receiver Parser<TItem, TIn, A>
+ * @param name () -> String
+ * @return Parser<TItem, TIn, A>
+ */
 infix fun <TItem : Any, TIn, A : Any> Parser<TItem, TIn, A>.rename(name: () -> String): Parser<TItem, TIn, A> where TIn : IInput<TItem, TIn> =
         Parser(name, this.parserFunction)

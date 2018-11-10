@@ -35,7 +35,14 @@ import com.nekomatic.katarynka.core.result.Success
 
 typealias genericParser<TItem, TIn, A> = (TIn, () -> String) -> parserResult<TItem, TIn, out A>
 
-
+//TODO: create documentation
+/**
+ *
+ * @param input TIn
+ * @param name () -> String
+ * @param match (TItem) -> Boolean
+ * @return parserResult<TItem, TIn, out TItem>
+ */
 fun <TItem : Any, TIn> standardParserFunction(input: TIn, name: () -> String, match: (TItem) -> Boolean): parserResult<TItem, TIn, out TItem>
         where TIn : IInput<TItem, TIn> {
     val currentItem = input.item
@@ -65,6 +72,13 @@ fun <TItem : Any, TIn> standardParserFunction(input: TIn, name: () -> String, ma
     }
 }
 
+//TODO: create documentation
+/**
+ *
+ * @param input TIn
+ * @param name () -> String
+ * @return parserResult<TItem, TIn, out EOF>
+ */
 fun <TItem : Any, TIn> eofParserFunction(input: TIn, name: () -> String): parserResult<TItem, TIn, out EOF>
         where TIn : IInput<TItem, TIn> {
     return when (input.item) {
@@ -88,14 +102,6 @@ fun <TItem : Any, TIn> eofParserFunction(input: TIn, name: () -> String): parser
 object EOF
 
 typealias parserResult<TItem, TIn, TVal> = Either<Failure<TItem, TIn>, Success<TItem, TIn, TVal>>
-
-fun <TItem : Any, TIn, A : Any, B : Any> Success<TItem, TIn, A>.map(f: (A) -> B) where TIn : IInput<TItem, TIn> =
-        Success(
-                value = f(this.value),
-                startingInput = this.startingInput,
-                remainingInput = this.remainingInput,
-                payload = this.payload
-        )
 
 
 

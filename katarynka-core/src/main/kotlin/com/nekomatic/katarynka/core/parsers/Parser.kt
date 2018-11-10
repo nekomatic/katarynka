@@ -26,7 +26,16 @@ package com.nekomatic.katarynka.core.parsers
 
 import com.nekomatic.katarynka.core.*
 import com.nekomatic.katarynka.core.input.IInput
-
+//TODO: create documentation
+/**
+ *
+ * @param TItem : Any
+ * @param TIn
+ * @param TVal : Any
+ * @property name Function0<String>
+ * @property parserFunction Function2<TIn, Function0<String>, Either<Failure<TItem, TIn>, Success<TItem, TIn, out TVal>>>
+ * @constructor
+ */
 open class Parser<TItem : Any, TIn, TVal : Any>(val name: () -> String, val parserFunction: genericParser<TItem, TIn, TVal>)
         where TIn : IInput<TItem, TIn> {
 

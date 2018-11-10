@@ -26,7 +26,13 @@ package com.nekomatic.katarynka.core.parsers
 
 import com.nekomatic.katarynka.core.input.IInput
 import com.nekomatic.katarynka.core.standardParserFunction
-
+//TODO: create documentation
+/**
+ *
+ * @param TItem : Any
+ * @param TIn
+ * @constructor
+ */
 open class MatchParser<TItem : Any, TIn>(name: () -> String, match: (TItem) -> Boolean)
     : Parser<TItem, TIn, TItem>(name, { input, n -> standardParserFunction(input, n, match) })
         where TIn : IInput<TItem, TIn>

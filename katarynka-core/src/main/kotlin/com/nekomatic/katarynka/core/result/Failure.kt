@@ -26,6 +26,16 @@ package com.nekomatic.katarynka.core.result
 
 import com.nekomatic.katarynka.core.input.IInput
 
+//TODO: create documentation
+/**
+ *
+ * @param TItem : Any
+ * @param TIn
+ * @property expected Function0<String>
+ * @property startingInput TIn
+ * @property remainingInput TIn
+ * @constructor
+ */
 data class Failure<TItem : Any, TIn>(
         val expected: () -> String,
         val startingInput: TIn,

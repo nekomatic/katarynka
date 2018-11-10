@@ -25,7 +25,7 @@ data class ArrayNode(val values: List<JsonNode>) : JsonNode()
 data class ObjectNode(val values: List<PropertyNode>) : JsonNode()
 data class PropertyNode(val name: String, val value: JsonNode)
 
-
+//TODO: complete json number implementation
 @ExperimentalUnsignedTypes
 object JsonParser : ForceFailParser<Char, CInput, JsonNode>({ "json" }) {
     private val JNode = RefParser<Char, CInput, JsonNode>()
@@ -35,11 +35,12 @@ object JsonParser : ForceFailParser<Char, CInput, JsonNode>({ "json" }) {
             .onlyIf { it > -1 }
     private val fourDigitHex = hexDigitAsInt times 4u map { it[3] + it[2] * 16 + (it[1] + it[0] * 16) * 256 }
 
-
-    private val jNull by lazy { PString("null") map { NullNode } }
+    //TODO: create tests
+    internal val jNull by lazy { PString("null") map { NullNode } }
     private val jTrue by lazy { PString("true") map { TrueNode } }
     private val jFalse by lazy { PString("false") map { FalseNode } }
-    private val jBool by lazy { jTrue.map { it as BoolNode } orElse jFalse.map { it as BoolNode } }
+    //TODO: create tests
+    internal val jBool by lazy { jTrue.map { it as BoolNode } orElse jFalse.map { it as BoolNode } }
 
     private val lSqBr by lazy { PChar('[').token() }
     private val rSqBr by lazy { PChar(']').token() }
@@ -65,7 +66,8 @@ object JsonParser : ForceFailParser<Char, CInput, JsonNode>({ "json" }) {
     private val escaped by lazy { strUTF orElse strQ orElse strBS orElse strFS orElse strBSP orElse strFF orElse strNL orElse strRT orElse strT }
     private val jStringChar = escaped orElse (quote orElse backSl).not()
 
-    private val jString = (PString("\"\"").toConst(StringNode(""))) orElse
+    //TODO: create tests
+    internal val jString = (PString("\"\"").toConst(StringNode(""))) orElse
             (jStringChar.oneOrMore().surroundedBy(quote).map { StringNode(it.joinToString("")) })
 
     private val jNumDiscreete = zero toConst listOf('0') orElse nonZero.zeroOrMore()
@@ -75,17 +77,21 @@ object JsonParser : ForceFailParser<Char, CInput, JsonNode>({ "json" }) {
     private val emptyArray = (lSqBr then rSqBr).toConst(ArrayNode(listOf()) as JsonNode)
     private val nonEmptyArray = (JNode listWithSeparator coma) suffixedBy rSqBr prefixedBy lSqBr map { ArrayNode(it) as JsonNode }
 
-
-    private val jArrayParser = nonEmptyArray orElse emptyArray
+    //TODO: create tests
+    internal val jArrayParser = nonEmptyArray orElse emptyArray
 
     private val jProperty = (jString suffixedBy colon) then JNode map { PropertyNode(name = it.a.value, value = it.b) }
     private val emptyObject = (lCrBr then rCrBr).toConst(ObjectNode(listOf()) as JsonNode)
     private val nonEmptyObject = (jProperty listWithSeparator coma).suffixedBy(rCrBr) prefixedBy lCrBr map { ObjectNode(it) as JsonNode }
-    private val JObjectParser = nonEmptyObject orElse emptyObject
 
-    private val JValue: Parser<Char, LineInput<Char>, JsonNode> = jBool.map { it as JsonNode } orElse jNull.map { it as JsonNode } orElse jString.map { it as JsonNode }
+    //TODO: create tests
+    internal val JObjectParser = nonEmptyObject orElse emptyObject
 
-    val jnode = JNode.set(JValue orElse jArrayParser orElse JObjectParser)
+    //TODO: create tests
+    internal val JValue: Parser<Char, LineInput<Char>, JsonNode> = jBool.map { it as JsonNode } orElse jNull.map { it as JsonNode } orElse jString.map { it as JsonNode }
+
+    //TODO: create tests
+    internal val jnode = JNode.set(JValue orElse jArrayParser orElse JObjectParser)
 
     override fun parse(input: CInput): parserResult<Char, CInput, out JsonNode> {
         return jnode.parse(input)

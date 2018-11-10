@@ -28,6 +28,14 @@ import arrow.core.left
 import com.nekomatic.katarynka.core.result.Failure
 import com.nekomatic.katarynka.core.input.IInput
 //TODO: Create tests
+//TODO: create documentation
+/**
+ *
+ * @param TItem : Any
+ * @param TIn
+ * @param A : Any
+ * @constructor
+ */
 open class ForceFailParser<TItem : Any, TIn, A : Any>(name: () -> String)
     : Parser<TItem, TIn, A>(
         name = name,

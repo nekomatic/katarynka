@@ -28,7 +28,16 @@ import arrow.core.None
 import arrow.core.Option
 import arrow.core.Some
 import arrow.core.some
-
+//TODO: create documentation
+/**
+ *
+ * @param TItem : Any
+ * @property item Option<TItem>
+ * @property position Long
+ * @property iterator Iterator<TItem>
+ * @property next Input<TItem>
+ * @constructor
+ */
 open class Input<TItem : Any> protected constructor(
         override val item: Option<TItem>,
         override val position: Long,
