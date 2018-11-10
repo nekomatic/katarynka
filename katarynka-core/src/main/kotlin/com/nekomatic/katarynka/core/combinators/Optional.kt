@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  ******************************************************************************/
 
-@file:JvmName("Option")
+@file:JvmName("Optional")
 
 package com.nekomatic.katarynka.core.combinators
 

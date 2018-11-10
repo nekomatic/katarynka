@@ -96,9 +96,6 @@ fun <TItem : Any, TIn> eofParserFunction(input: TIn, name: () -> String): parser
     }
 }
 
-//fun <TItem : Any, TIn, A : Any> Parser<TItem, TIn, A>.parse(input: TIn): parserResult<TItem, TIn, out A> where TIn : IInput<TItem, TIn> =
-//        this.parserFunction(input, this.rename)
-
 object EOF
 
 typealias parserResult<TItem, TIn, TVal> = Either<Failure<TItem, TIn>, Success<TItem, TIn, TVal>>
