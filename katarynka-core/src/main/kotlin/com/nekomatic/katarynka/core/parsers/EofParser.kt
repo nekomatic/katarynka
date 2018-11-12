@@ -34,5 +34,5 @@ import com.nekomatic.katarynka.core.eofParserFunction
  * @param TIn
  */
 open class EofParser<TItem : Any, TIn>
-    : Parser<TItem, TIn, EOF>({ "eof" }, { input, n -> eofParserFunction(input, n) })
+    : Parser<TItem, TIn, EOF>( "eof" , { input, n -> eofParserFunction(input, n) })
         where TIn : IInput<TItem, TIn>

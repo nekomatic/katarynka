@@ -27,6 +27,6 @@ package com.nekomatic.katarynka.core.parsers
 import com.nekomatic.katarynka.core.input.IInput
 import com.nekomatic.katarynka.core.standardParserFunction
 
-open class AnyParser<TItem : Any, TIn>(name: () -> String)
+open class AnyParser<TItem : Any, TIn>(name: String)
     : Parser<TItem, TIn, TItem>(name, { input, n -> standardParserFunction(input, n, { true }) })
         where TIn : IInput<TItem, TIn>

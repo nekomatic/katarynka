@@ -41,17 +41,17 @@ import com.nekomatic.katarynka.core.parsers.Parser
 infix fun <TItem : Any, TIn, A : Any> Parser<TItem, TIn, A>.orElse(thatParser: Parser<TItem, TIn, A>): Parser<TItem, TIn, A>
         where TIn : IInput<TItem, TIn> {
 
-    fun f(input: TIn, name: () -> String): parserResult<TItem, TIn, out A> {
-        val r1 = this.parserFunction(input, name)
+    fun f(input: TIn): parserResult<TItem, TIn, out A> {
+        val r1 = this.parse(input)
         return when (r1) {
             is Either.Right -> r1
-            else -> thatParser.parserFunction(input, name)
+            else -> thatParser.parse(input)
         }
     }
 
     return Parser(
-            name = { "${this.name} or ${thatParser.name}" },
-            parserFunction = { input, name -> f(input, name) })
+            name = "${this.name} or ${thatParser.name}",
+            parserFunction = { input, _ -> f(input) })
 }
 
 

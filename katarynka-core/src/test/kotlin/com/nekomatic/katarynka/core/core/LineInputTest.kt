@@ -23,7 +23,7 @@ internal class LineInputTest {
     private val textEol1 = "\r\nb".toList()
 
     private val eolParser =
-            ItemParser<Char, Input<Char>>({ "r" }, '\r') then ItemParser({ "n" }, '\n') map { _ -> 1L }
+            ItemParser<Char, Input<Char>>( "r" , '\r') then ItemParser( "n", '\n') map { _ -> 1L }
 
     @DisplayName("LineInput.next")
     @Test

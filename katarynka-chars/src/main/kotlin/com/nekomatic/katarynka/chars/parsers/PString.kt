@@ -16,11 +16,11 @@ import com.nekomatic.katarynka.core.parsers.Parser
  */
 class PString(value: String) : Parser<Char, LineInput<Char>, String>
 (
-        name = { value },
-        parserFunction = { i, n ->
+        name =  value ,
+        parserFunction = { i, _ ->
             value.toList()
                     .map { PChar(it) }
                     .sequence().map { it.joinToString("") }
-                    .parse(i).mapLeft { CFailure(n, i, i) }
+                    .parse(i)
         }
 )

@@ -51,11 +51,11 @@ internal class EofParserTest {
                     { "EofParser result of a non-empty input should be Either.Left" }
                 },
                 {
-                    assertEquals((result as Either.Left<Failure<Char, Input<Char>>>).a.expected(), { "eof" }())
+                    assertEquals((result as Either.Left<Failure<Char, Input<Char>>>).a.expected, "eof")
                     { "Expected of a failed EofParser should be {eof}" }
                 },
                 {
-                    assertEquals((result as Either.Left<Failure<Char, Input<Char>>>).a.remainingInput.position, result.a.startingInput.position)
+                    assertEquals((result as Either.Left<Failure<Char, Input<Char>>>).a.remainingInput.position, result.a.failedAtInput.position)
                     { "Remaining input of a failed EofParser should be at the same position as the starting input" }
                 }
         )

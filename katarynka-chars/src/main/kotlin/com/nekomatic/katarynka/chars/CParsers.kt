@@ -19,16 +19,16 @@ typealias CMatchParser = MatchParser<Char, CInput>
 
 
 //TODO: Create tests
-val WHITESPACE = CMatchParser({ "whitespace" }) { it.isWhitespace() }
-val WHITESPACES = WHITESPACE.oneOrMore() rename { "whitespaces" }
+val WHITESPACE = CMatchParser("whitespace") { it.isWhitespace() }
+val WHITESPACES = WHITESPACE.oneOrMore() rename "whitespaces"
 
-val DIGIT = CMatchParser({ "digit" }) { it.isDigit() }
-val LETTER_OR_DIGIT = CMatchParser({ "letter or digit" }) { it.isLetterOrDigit() }
+val DIGIT = CMatchParser("digit") { it.isDigit() }
+val LETTER_OR_DIGIT = CMatchParser("letter or digit") { it.isLetterOrDigit() }
 
-val LOWERCASE_CHAR = CMatchParser({ "lowercase letter" }) { it.isLowerCase() }
-val UPPERCASE_CHAR = CMatchParser({ "uppercase letter" }) { it.isUpperCase() }
-val LETTER = CMatchParser({ "letter" }) { it.isLetter() }
+val LOWERCASE_CHAR = CMatchParser("lowercase letter") { it.isLowerCase() }
+val UPPERCASE_CHAR = CMatchParser("uppercase letter") { it.isUpperCase() }
+val LETTER = CMatchParser("letter") { it.isLetter() }
 val EOL = ((PChar('\r') then PChar('\n')).toConst('\n')
         orElse PChar('\n')
-        orElse PChar('\r')) rename { "end of line" }
+        orElse PChar('\r')) rename "end of line"
 

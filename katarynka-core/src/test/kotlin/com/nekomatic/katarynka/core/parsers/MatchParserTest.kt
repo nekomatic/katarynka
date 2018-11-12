@@ -14,7 +14,7 @@ internal class MatchParserTest {
     private val text0 = "".toList()
     private val textA = "a".toList()
     private val textB = "b".toList()
-    private val parser = MatchParser<Char, Input<Char>>({ "a" }) { it == 'a' }
+    private val parser = MatchParser<Char, Input<Char>>("a") { it == 'a' }
 
     @DisplayName("Empty input")
     @Test
@@ -27,11 +27,11 @@ internal class MatchParserTest {
                     { "MatchParser result of an empty input should be Either.Left" }
                 },
                 {
-                    assertEquals((result as Either.Left<Failure<Char, Input<Char>>>).a.expected(), { "a" }())
+                    assertEquals((result as Either.Left<Failure<Char, Input<Char>>>).a.expected, { "a" }())
                     { "Expected of a failed MatchParser should be the value of parser's rename" }
                 },
                 {
-                    assertEquals((result as Either.Left<Failure<Char, Input<Char>>>).a.remainingInput.position, result.a.startingInput.position)
+                    assertEquals((result as Either.Left<Failure<Char, Input<Char>>>).a.remainingInput.position, result.a.failedAtInput.position)
                     { "Remaining input of a failed MatchParser should be at the same position as the starting input" }
                 }
         )
@@ -71,11 +71,11 @@ internal class MatchParserTest {
                     { "MatchParser result of a non-matching input should be Either.Left" }
                 },
                 {
-                    assertEquals((result as Either.Left<Failure<Char, Input<Char>>>).a.expected(), { "a" }())
+                    assertEquals((result as Either.Left<Failure<Char, Input<Char>>>).a.expected, "a")
                     { "Expected of a failed MatchParser should be the value of parser's rename" }
                 },
                 {
-                    assertEquals((result as Either.Left<Failure<Char, Input<Char>>>).a.remainingInput.position, result.a.startingInput.position)
+                    assertEquals((result as Either.Left<Failure<Char, Input<Char>>>).a.remainingInput.position, result.a.failedAtInput.position)
                     { "Remaining input of a failed MatchParser should be at the same position as the starting input" }
                 }
         )

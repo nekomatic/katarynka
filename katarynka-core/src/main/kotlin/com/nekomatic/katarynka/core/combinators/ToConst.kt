@@ -29,6 +29,7 @@ package com.nekomatic.katarynka.core.combinators
 import com.nekomatic.katarynka.core.input.IInput
 import com.nekomatic.katarynka.core.result.map
 import com.nekomatic.katarynka.core.parsers.Parser
+
 //TODO: create documentation
 /**
  *
@@ -37,4 +38,4 @@ import com.nekomatic.katarynka.core.parsers.Parser
  * @return Parser<TItem, TIn, B>
  */
 infix fun <TItem : Any, TIn, A : Any, B : Any> Parser<TItem, TIn, A>.toConst(c: B): Parser<TItem, TIn, B> where TIn : IInput<TItem, TIn> =
-        Parser(name, { input, n -> this.parserFunction(input, n).map { s -> s.map { _ -> c } } })
+        Parser(name) { input, _ -> this.parse(input).map { s -> s.map { _ -> c } } }

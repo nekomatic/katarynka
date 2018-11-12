@@ -40,12 +40,13 @@ import com.nekomatic.katarynka.core.result.Failure
  * @return Parser<TItem, TIn, A>
  */
 infix fun <TItem : Any, TIn, A : Any> Parser<TItem, TIn, A>.onlyIf(f: (A) -> Boolean): Parser<TItem, TIn, A> where TIn : IInput<TItem, TIn> =
-        Parser(name, { input, n ->
+        Parser(name) { input, n ->
             this.parse(input)
                     .flatMap { success ->
                         when {
                             f(success.value) -> Either.Right(success)
-                            else -> Either.Left(Failure(n, success.startingInput, success.startingInput))
+                            else -> Either.Left(Failure(n, input, input))
                         }
                     }
-        })
+        }
+

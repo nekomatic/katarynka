@@ -14,7 +14,7 @@ internal class OnlyIfCombinatorTest {
     private val textEmpty = "".toList()
     private val text0 = "0".toList()
     private val text1 = "1".toList()
-    private val parser = MatchParser<Char, Input<Char>>({ "non-zero digit" }) { it.isDigit() } onlyIf { it != '0' }
+    private val parser = MatchParser<Char, Input<Char>>("non-zero digit") { it.isDigit() } onlyIf { it != '0' }
 
     @DisplayName("Empty input")
     @Test
@@ -27,11 +27,11 @@ internal class OnlyIfCombinatorTest {
                     { "OnlyIf parser result of an empty input should be Either.Left" }
                 },
                 {
-                    assertEquals((result as Either.Left<Failure<Char, Input<Char>>>).a.expected(), { "non-zero digit" }())
+                    assertEquals((result as Either.Left<Failure<Char, Input<Char>>>).a.expected, "non-zero digit")
                     { "Expected of a failed OnlyIf parser should be the value of parser's rename" }
                 },
                 {
-                    assertEquals((result as Either.Left<Failure<Char, Input<Char>>>).a.remainingInput.position, result.a.startingInput.position)
+                    assertEquals((result as Either.Left<Failure<Char, Input<Char>>>).a.remainingInput.position, result.a.failedAtInput.position)
                     { "Remaining input of a failed OnlyIf parser should be at the same position as the starting input" }
                 }
         )
@@ -71,7 +71,7 @@ internal class OnlyIfCombinatorTest {
                     { "OnlyIf parser result of a non-matching input should be Either.Left" }
                 },
                 {
-                    assertEquals((result as Either.Left<Failure<Char, Input<Char>>>).a.expected(), { "non-zero digit" }())
+                    assertEquals((result as Either.Left<Failure<Char, Input<Char>>>).a.expected, "non-zero digit")
                     { "Expected of a failed OnlyIf parser should be the value of parser's rename" }
                 },
                 {

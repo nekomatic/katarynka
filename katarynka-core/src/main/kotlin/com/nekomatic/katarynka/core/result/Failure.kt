@@ -32,12 +32,12 @@ import com.nekomatic.katarynka.core.input.IInput
  * @param TItem : Any
  * @param TIn
  * @property expected Function0<String>
- * @property startingInput TIn
+ * @property failedAtInput TIn
  * @property remainingInput TIn
  * @constructor
  */
 data class Failure<TItem : Any, TIn>(
-        val expected: () -> String,
-        val startingInput: TIn,
+        val expected: String,
+        val failedAtInput: TIn,
         val remainingInput: TIn
 ) where TIn : IInput<TItem, TIn>

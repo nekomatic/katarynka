@@ -45,7 +45,7 @@ import com.nekomatic.katarynka.core.parsers.Parser
 infix fun <TItem : Any, TIn, A : Any, B : Any> Parser<TItem, TIn, A>.then(thatParser: Parser<TItem, TIn, B>): Parser<TItem, TIn, Tuple2<A, B>>
         where TIn : IInput<TItem, TIn> {
     val thisParser = this
-    fun f(input: TIn, name: () -> String): Either<Failure<TItem, TIn>, Success<TItem, TIn, Tuple2<A, B>>> {
+    fun f(input: TIn, name: String): Either<Failure<TItem, TIn>, Success<TItem, TIn, Tuple2<A, B>>> {
         return Either
                 .monad<Failure<TItem, TIn>>()
                 .binding {
@@ -59,11 +59,17 @@ infix fun <TItem : Any, TIn, A : Any, B : Any> Parser<TItem, TIn, A>.then(thatPa
                     )
                 }
                 .fix()
-                .mapLeft { Failure(name, input, input) }
+                .mapLeft {
+                    Failure(
+                            expected = it.expected,
+                            failedAtInput = it.failedAtInput,
+                            remainingInput = input
+                    )
+                }
     }
 
     return Parser(
-            name = { this.name() + thatParser.name() },
+            name = this.name + thatParser.name,
             parserFunction = { input, name -> f(input, name) })
 }
 

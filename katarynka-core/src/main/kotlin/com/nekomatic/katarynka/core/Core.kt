@@ -31,9 +31,9 @@ import com.nekomatic.katarynka.core.input.IInput
 import com.nekomatic.katarynka.core.result.Failure
 import com.nekomatic.katarynka.core.result.Success
 
-//TODO: create combinator 'listWithSeparator'
+//TODO: Failure needs to preserve the fail position
 
-typealias genericParser<TItem, TIn, A> = (TIn, () -> String) -> parserResult<TItem, TIn, out A>
+typealias ParserFunction<TItem, TIn, A> = (TIn, String) -> parserResult<TItem, TIn, out A>
 
 //TODO: create documentation
 /**
@@ -43,13 +43,13 @@ typealias genericParser<TItem, TIn, A> = (TIn, () -> String) -> parserResult<TIt
  * @param match (TItem) -> Boolean
  * @return parserResult<TItem, TIn, out TItem>
  */
-fun <TItem : Any, TIn> standardParserFunction(input: TIn, name: () -> String, match: (TItem) -> Boolean): parserResult<TItem, TIn, out TItem>
+fun <TItem : Any, TIn> standardParserFunction(input: TIn, name: String, match: (TItem) -> Boolean): parserResult<TItem, TIn, out TItem>
         where TIn : IInput<TItem, TIn> {
     val currentItem = input.item
     return when (currentItem) {
         None -> Failure(
                 expected = name,
-                startingInput = input,
+                failedAtInput = input,
                 remainingInput = input
         ).left()
         is Some -> {
@@ -65,7 +65,7 @@ fun <TItem : Any, TIn> standardParserFunction(input: TIn, name: () -> String, ma
             } else
                 Failure(
                         expected = name,
-                        startingInput = input,
+                        failedAtInput = input,
                         remainingInput = input
                 ).left()
         }
@@ -79,7 +79,7 @@ fun <TItem : Any, TIn> standardParserFunction(input: TIn, name: () -> String, ma
  * @param name () -> String
  * @return parserResult<TItem, TIn, out EOF>
  */
-fun <TItem : Any, TIn> eofParserFunction(input: TIn, name: () -> String): parserResult<TItem, TIn, out EOF>
+fun <TItem : Any, TIn> eofParserFunction(input: TIn, name: String): parserResult<TItem, TIn, out EOF>
         where TIn : IInput<TItem, TIn> {
     return when (input.item) {
         None -> Success(
@@ -90,7 +90,7 @@ fun <TItem : Any, TIn> eofParserFunction(input: TIn, name: () -> String): parser
         ).right()
         is Some -> Failure(
                 expected = name,
-                startingInput = input,
+                failedAtInput = input,
                 remainingInput = input
         ).left()
     }

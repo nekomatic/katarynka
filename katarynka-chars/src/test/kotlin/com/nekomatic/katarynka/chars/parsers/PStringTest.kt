@@ -49,8 +49,8 @@ internal class PStringTest {
                 { assertTrue(result is Either.Left<*>, "result should be Either.Left") },
                 {
                     assertEquals(
-                            "abcd",
-                            (result as Either.Left<CFailure>).a.expected(),
+                            "c",
+                            (result as Either.Left<CFailure>).a.expected,
                             "the expected value should be equal to the requested string"
                     )
                 }

@@ -40,12 +40,14 @@ import kotlinx.coroutines.runBlocking
  * @property innerParser Parser<TItem, TIn, A>
  * @property parser Parser<TItem, TIn, A>
  */
-class RefParser<TItem : Any, TIn, A : Any>() : ForceFailParser<TItem, TIn, A>({ "Reference parser not initialized" }) where TIn : IInput<TItem, TIn> {
+class RefParser<TItem : Any, TIn, A : Any>() : ForceFailParser<TItem, TIn, A>("Reference parser not initialized") where TIn : IInput<TItem, TIn> {
 
     private var innerParser: Parser<TItem, TIn, A> = this
 
     public fun set(p: Parser<TItem, TIn, A>): Parser<TItem, TIn, A> {
         innerParser = p
+        //val newOne = parser
+        //return this
         return parser
     }
 

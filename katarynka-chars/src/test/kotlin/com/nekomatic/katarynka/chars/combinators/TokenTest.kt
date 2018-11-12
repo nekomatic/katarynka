@@ -108,7 +108,7 @@ internal class TokenTest {
                 {
                     assertEquals(
                             "abcd",
-                            (result as Either.Left<CFailure>).a.expected(),
+                            (result as Either.Left<CFailure>).a.expected,
                             "the expected value should be equal to the requested string"
                     )
                 }

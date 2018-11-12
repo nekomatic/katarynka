@@ -38,4 +38,4 @@ import com.nekomatic.katarynka.core.parsers.Parser
  * @return Parser<TItem, TIn, B>
  */
 infix fun <TItem : Any, TIn, A : Any, B : Any> Parser<TItem, TIn, A>.map(f: (A) -> B): Parser<TItem, TIn, B> where TIn : IInput<TItem, TIn> =
-        Parser(name, { input, n -> this.parserFunction(input, n).map { s -> s.map(f) } })
+        Parser(name) { input, _ -> this.parse(input).map { s -> s.map(f) } }

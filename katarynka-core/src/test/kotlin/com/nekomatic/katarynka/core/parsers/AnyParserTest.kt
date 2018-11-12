@@ -16,7 +16,7 @@ internal class AnyParserTest {
 
     private val text0 = "".toList()
     private val text1 = "a".toList()
-    private val parser = AnyParser<Char, Input<Char>> { "any" }
+    private val parser = AnyParser<Char, Input<Char>>("any")
 
     @DisplayName("Empty input")
     @Test
@@ -29,7 +29,7 @@ internal class AnyParserTest {
                     { "AnyParser result of an empty input should be Either.Left" }
                 },
                 {
-                    assertEquals((result as Either.Left<Failure<Char, Input<Char>>>).a.expected(), { "any" }())
+                    assertEquals((result as Either.Left<Failure<Char, Input<Char>>>).a.expected, "any")
                     { "Expected of a failed AnyParser should be the value of parser's rename" }
                 },
                 {

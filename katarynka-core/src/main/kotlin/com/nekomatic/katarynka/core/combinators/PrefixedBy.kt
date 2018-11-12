@@ -47,7 +47,7 @@ import com.nekomatic.katarynka.core.result.Success
 infix fun <TItem : Any, TIn, A : Any, B : Any> Parser<TItem, TIn, A>.prefixedBy(thatParser: Parser<TItem, TIn, B>): Parser<TItem, TIn, A>
         where TIn : IInput<TItem, TIn> {
     val thisParser = this
-    fun f(input: TIn, name: () -> String): Either<Failure<TItem, TIn>, Success<TItem, TIn, A>> {
+    fun f(input: TIn, name: String): Either<Failure<TItem, TIn>, Success<TItem, TIn, A>> {
         return Either
                 .monad<Failure<TItem, TIn>>()
                 .binding {
@@ -61,10 +61,16 @@ infix fun <TItem : Any, TIn, A : Any, B : Any> Parser<TItem, TIn, A>.prefixedBy(
                     )
                 }
                 .fix()
-                .mapLeft { Failure(name, input, input) }
+                .mapLeft {
+                    Failure(
+                            expected = it.expected,
+                            failedAtInput = it.remainingInput,
+                            remainingInput = input
+                    )
+                }
     }
 
     return Parser(
-            name = { this.name() },
+            name = this.name,
             parserFunction = { input, name -> f(input, name) })
 }

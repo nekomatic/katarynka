@@ -49,7 +49,7 @@ internal class NotCombinatorTest {
                     { "Not parse result of a non-matching input should be Either.Left" }
                 },
                 {
-                    assertEquals((result as Either.Left<Failure<Char, Input<Char>>>).a.expected(), { "a" }())
+                    assertEquals((result as Either.Left<Failure<Char, Input<Char>>>).a.expected, "a")
                     { "Expected of a failed Not parse should be the value of parser's rename" }
                 },
                 {

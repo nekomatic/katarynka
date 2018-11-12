@@ -37,7 +37,7 @@ import com.nekomatic.katarynka.core.parsers.Parser
  * @return Parser<TItem, TIn, List<A>>
  */
 fun <TItem : Any, TIn, A : Any> Parser<TItem, TIn, A>.zeroOrMore(): Parser<TItem, TIn, List<A>> where TIn : IInput<TItem, TIn> =
-        Parser(name, { input, _ ->
+        Parser(name) { input, _ ->
             fun nextSuccess(i: TIn): Success<TItem, TIn, out A>? = this.parse(i).fold({ null }, { it })
             generateSequence(nextSuccess(input)) { s -> nextSuccess(s.remainingInput) }
                     .fold(Success(listOf<A>(), input, input) { listOf() }) { acc, success ->
@@ -48,5 +48,5 @@ fun <TItem : Any, TIn, A : Any> Parser<TItem, TIn, A>.zeroOrMore(): Parser<TItem
                                 payload = { acc.payload() + success.payload() }
                         )
                     }.right()
-        })
+        }
 

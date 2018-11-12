@@ -60,8 +60,8 @@ internal class ThenCombinatorTest {
                 },
                 {
                     assertEquals(
-                            "ab",
-                            (result as Either.Left<Failure<Char, Input<Char>>>).a.expected(),
+                            "b",
+                            (result as Either.Left<Failure<Char, Input<Char>>>).a.expected,
                             "Expected of failed Then parser should be a sum of meber parser's expected"
                     )
                 }

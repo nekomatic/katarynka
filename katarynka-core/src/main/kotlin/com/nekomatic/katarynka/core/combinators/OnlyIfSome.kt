@@ -25,20 +25,30 @@
 
 package com.nekomatic.katarynka.core.combinators
 
+import arrow.core.Either
+import arrow.core.Option
+import arrow.core.Some
+import arrow.core.flatMap
 import com.nekomatic.katarynka.core.input.IInput
-import com.nekomatic.katarynka.core.parsers.ForceSuccessParser
 import com.nekomatic.katarynka.core.parsers.Parser
+import com.nekomatic.katarynka.core.result.Failure
+import com.nekomatic.katarynka.core.result.map
 
 //TODO: create documentation
+//TODO: create tests
 /**
  *
- * @receiver Parser<TItem, TIn, A>
- * @param count UInt
- * @return Parser<TItem, TIn, List<A>>
+ * @receiver Parser<TItem, TIn, Option<A>>
+ * @return Parser<TItem, TIn, A>
  */
-@ExperimentalUnsignedTypes
-infix fun <TItem : Any, TIn, A : Any> Parser<TItem, TIn, A>.times(count: UInt): Parser<TItem, TIn, List<A>> where TIn : IInput<TItem, TIn> =
-        if (count == 0u)
-            ForceSuccessParser<TItem, TIn>() map { listOf<A>() }
-        else
-            List(count.toInt()) { this }.sequence()
+fun <TItem : Any, TIn, A : Any> Parser<TItem, TIn, Option<A>>.onlyIfSome(): Parser<TItem, TIn, A> where TIn : IInput<TItem, TIn> =
+        Parser(name) { input, n ->
+            this.parse(input)
+                    .flatMap { success ->
+                        val value = success.value
+                        when (value) {
+                            is Some -> Either.Right(success.map { value.t })
+                            else -> Either.Left(Failure(n, input, input))
+                        }
+                    }
+        }

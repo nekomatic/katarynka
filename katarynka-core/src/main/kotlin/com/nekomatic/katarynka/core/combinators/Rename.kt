@@ -26,8 +26,11 @@
 
 package com.nekomatic.katarynka.core.combinators
 
+import arrow.core.Either
 import com.nekomatic.katarynka.core.input.IInput
 import com.nekomatic.katarynka.core.parsers.Parser
+import com.nekomatic.katarynka.core.result.Failure
+import com.nekomatic.katarynka.core.result.Success
 
 //TODO: create documentation
 /**
@@ -36,14 +39,14 @@ import com.nekomatic.katarynka.core.parsers.Parser
  * @param name String
  * @return Parser<TItem, TIn, A>
  */
-infix fun <TItem : Any, TIn, A : Any> Parser<TItem, TIn, A>.rename(name: String): Parser<TItem, TIn, A> where TIn : IInput<TItem, TIn> =
-        Parser({ name }, this.parserFunction)
-//TODO: create documentation
-/**
- *
- * @receiver Parser<TItem, TIn, A>
- * @param name () -> String
- * @return Parser<TItem, TIn, A>
- */
-infix fun <TItem : Any, TIn, A : Any> Parser<TItem, TIn, A>.rename(name: () -> String): Parser<TItem, TIn, A> where TIn : IInput<TItem, TIn> =
-        Parser(name, this.parserFunction)
+infix fun <TItem : Any, TIn, A : Any> Parser<TItem, TIn, A>.rename(name: String): Parser<TItem, TIn, A> where TIn : IInput<TItem, TIn> {
+    fun f(input: TIn, name: String): Either<Failure<TItem, TIn>, Success<TItem, TIn, out A>> =
+            this.parse(input).mapLeft {
+                Failure(
+                        expected = name,
+                        failedAtInput = it.failedAtInput,
+                        remainingInput = it.remainingInput
+                )
+            }
+    return Parser(name) { i, _ -> f(i, name) }
+}

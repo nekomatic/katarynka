@@ -16,11 +16,11 @@ typealias CInput = LineInput<Char>
 
 
 val CInputEolParser = Parser(
-        name = { "eol" },
+        name = "eol",
         parserFunction = { i: Input<Char>, _ ->
             val eol = ((ItemParser<Char, Input<Char>>('\r') then ItemParser<Char, Input<Char>>('\n')).toConst('\n')
                     orElse ItemParser<Char, Input<Char>>('\n')
-                    orElse ItemParser<Char, Input<Char>>('\r')) rename { "end of line" }
+                    orElse ItemParser<Char, Input<Char>>('\r')) rename "end of line"
             eol.parse(i).map { Success(it.payload().size.toLong() - 1, it.startingInput, it.remainingInput, it.payload) }
         }
 )

@@ -1,6 +1,7 @@
 package com.nekomatic.katarynka.samples.json
 
 import arrow.core.Either
+import com.nekomatic.katarynka.chars.CFailure
 import com.nekomatic.katarynka.chars.CInput
 import com.nekomatic.katarynka.core.input.Input
 import org.junit.jupiter.api.Test
@@ -99,9 +100,40 @@ internal class JsonParserTest {
     val parser = JsonParser
 
     @Test
-    fun parse() {
+    fun parseNoNumbers() {
         val input = CInput.create(validJsonSampleWithNoNumbers.iterator())
         val result = parser.parse(input)
         assertTrue(result is Either.Right<*>)
+    }
+
+    @Test
+    fun parseWithNumbers() {
+        val input = CInput.create(validJsonSample01.iterator())
+        val result = parser.parse(input)
+        val a = if (result is Either.Left<CFailure>) result.a.expected else ""
+        assertTrue(result is Either.Right<*>)
+    }
+
+    @Test
+    fun jobject() {
+        val input = CInput.create(validJsonSample01.iterator())
+        val result = JsonParser.parseObject(input)
+        val a = if (result is Either.Left<CFailure>) result.a.expected else ""
+        assertTrue(result is Either.Right<*>)
+    }
+
+    @Test
+    fun numbers() {
+        val input = CInput.create("-500".iterator())
+        val result = JsonParser.jNumber.parse(input)
+        val a = if (result is Either.Left<CFailure>) result.a.expected else ""
+        assertTrue(result is Either.Right<*>)
+    }
+
+    @Test
+    fun parseInvalid() {
+        val input = CInput.create(invalidJsonSample01.iterator())
+        val result = parser.parse(input)
+        assertTrue(result is Either.Left<*>)
     }
 }

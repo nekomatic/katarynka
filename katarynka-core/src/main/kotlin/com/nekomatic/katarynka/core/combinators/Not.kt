@@ -43,7 +43,7 @@ import com.nekomatic.katarynka.core.parsers.Parser
 fun <TItem : Any, TIn, A : Any> Parser<TItem, TIn, A>.not(): Parser<TItem, TIn, TItem> where TIn : IInput<TItem, TIn> =
         Parser(
                 name = name,
-                parserFunction = fun(input: TIn, n: () -> String): Either<Failure<TItem, TIn>, Success<TItem, TIn, out TItem>> =
+                parserFunction = fun(input: TIn, n: String): Either<Failure<TItem, TIn>, Success<TItem, TIn, out TItem>> =
                         if (this.parse(input).isRight()) Failure(n, input, input).left()
                         else AnyParser<TItem, TIn>(n).parse(input)
         )

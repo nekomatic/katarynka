@@ -38,7 +38,7 @@ internal class CombinatorTest {
     @DisplayName("Name combinator")
     @Test
     fun name() {
-        val named = parser rename { "Char 'a'" }
+        val named = parser rename "Char 'a'"
         val input = Input.create(textB.iterator())
         val result = named.parse(input)
         assertAll(
@@ -47,7 +47,7 @@ internal class CombinatorTest {
                     { "Named parser result of a matching input should be Either.Left" }
                 },
                 {
-                    Assertions.assertEquals((result as Either.Left<Failure<Char, Input<Char>>>).a.expected(), { "Char 'a'" }())
+                    Assertions.assertEquals((result as Either.Left<Failure<Char, Input<Char>>>).a.expected, "Char 'a'")
                     { "Expected of a failed ItemParser should be the value provided by the right side of the combinator" }
                 }
         )

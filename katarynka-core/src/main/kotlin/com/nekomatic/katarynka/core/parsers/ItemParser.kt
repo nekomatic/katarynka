@@ -26,6 +26,7 @@ package com.nekomatic.katarynka.core.parsers
 
 import com.nekomatic.katarynka.core.input.IInput
 import com.nekomatic.katarynka.core.standardParserFunction
+
 //TODO: create documentation
 /**
  *
@@ -33,9 +34,9 @@ import com.nekomatic.katarynka.core.standardParserFunction
  * @param TIn
  * @constructor
  */
-open class ItemParser<TItem : Any, TIn>(name: () -> String, item: TItem)
+open class ItemParser<TItem : Any, TIn>(name: String, item: TItem)
     : Parser<TItem, TIn, TItem>(name, { input, n -> standardParserFunction(input, n, { it == item }) })
         where TIn : IInput<TItem, TIn> {
-    constructor(item: TItem) : this({ item.toString() }, item)
+    constructor(item: TItem) : this(item.toString(), item)
 }
 

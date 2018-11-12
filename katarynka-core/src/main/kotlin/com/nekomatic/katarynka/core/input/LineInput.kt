@@ -76,7 +76,7 @@ class LineInput<TItem : Any> private constructor(
         fun <TItem : Any> create(iterator: Iterator<TItem>): LineInput<TItem> =
                 LineInput(
                         baseInput = Input.create(iterator),
-                        eolParser = ForceFailParser { "eol" },
+                        eolParser = ForceFailParser("eol"),
                         ignoreEolParser = true,
                         lastKnownEolPosition = 1
                 )
@@ -106,7 +106,9 @@ class LineInput<TItem : Any> private constructor(
                         line = if (newLastKnownEolPosition == position) line + 1 else line,
                         column = if (newLastKnownEolPosition == position) 1 else column + 1,
                         lastKnownEolPosition = if (ignoreEolParser) lastKnownEolPosition + 1 else newLastKnownEolPosition,
-                        eolParser = eolParser
+                        eolParser = eolParser,
+                        ignoreEolParser = ignoreEolParser
+
                 )
             }
         }

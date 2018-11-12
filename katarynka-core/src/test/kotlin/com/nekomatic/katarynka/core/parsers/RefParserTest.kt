@@ -41,7 +41,7 @@ class Branch(val e: Element) : Element("branch") //[]
 class EParser() {
 
     private val elementRef = RefParser<Char, Input<Char>, Element>()
-    private val pLeaf: Parser<Char, Input<Char>, Element> by lazy { MatchParser<Char, Input<Char>>({ "leaf" }) { it.isDigit() } map { (it - '0').toInt() } map { Leaf(it) as Element } }
+    private val pLeaf: Parser<Char, Input<Char>, Element> by lazy { MatchParser<Char, Input<Char>>("leaf") { it.isDigit() } map { (it - '0').toInt() } map { Leaf(it) as Element } }
     private val pBranch: Parser<Char, Input<Char>, Element> by lazy {
         ItemParser<Char, Input<Char>>('[') then
                 elementRef then
@@ -68,7 +68,7 @@ internal class RefParserTest {
     fun basicTest() {
         val input = Input.create(text0.iterator())
 //        val result = runBlocking { parser.parseAsync(input) }
-        val x =   parser.parse(input)
+        val x = parser.parse(input)
 //        val expected = if (result is Either.Left) result.a.expected() else ""
         assertTrue(x is Either.Right)
     }
@@ -77,7 +77,7 @@ internal class RefParserTest {
     fun singleTest() {
         val input = Input.create(text1.iterator())
 //        val result = runBlocking { parser.parseAsync(input) }
-        val x =   parser.parse(input)
+        val x = parser.parse(input)
 //        val expected = if (result is Either.Left) result.a.expected() else ""
         assertTrue(x is Either.Right)
     }
@@ -86,7 +86,7 @@ internal class RefParserTest {
     fun doubleTest() {
         val input = Input.create(text2.iterator())
 //        val result = runBlocking { parser.parseAsync(input) }
-        val x =   parser.parse(input)
+        val x = parser.parse(input)
 //        val expected = if (result is Either.Left) result.a.expected() else ""
         assertTrue(x is Either.Right)
     }

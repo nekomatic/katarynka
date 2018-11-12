@@ -26,6 +26,7 @@ package com.nekomatic.katarynka.core.parsers
 
 import com.nekomatic.katarynka.core.*
 import com.nekomatic.katarynka.core.input.IInput
+
 //TODO: create documentation
 /**
  *
@@ -36,7 +37,7 @@ import com.nekomatic.katarynka.core.input.IInput
  * @property parserFunction Function2<TIn, Function0<String>, Either<Failure<TItem, TIn>, Success<TItem, TIn, out TVal>>>
  * @constructor
  */
-open class Parser<TItem : Any, TIn, TVal : Any>(val name: () -> String, val parserFunction: genericParser<TItem, TIn, TVal>)
+open class Parser<TItem : Any, TIn, TVal : Any>(val name: String, val parserFunction: ParserFunction<TItem, TIn, TVal>)
         where TIn : IInput<TItem, TIn> {
 
     open suspend fun parseAsync(input: TIn): parserResult<TItem, TIn, out TVal> {

@@ -27,11 +27,11 @@ internal class ItemParserTest {
                     { "ItemParser result of an empty input should be Either.Left" }
                 },
                 {
-                    assertEquals((result as Either.Left<Failure<Char, Input<Char>>>).a.expected(), { "a" }())
+                    assertEquals((result as Either.Left<Failure<Char, Input<Char>>>).a.expected, "a")
                     { "Expected of a failed ItemParser should be the value of parser's rename" }
                 },
                 {
-                    assertEquals((result as Either.Left<Failure<Char, Input<Char>>>).a.remainingInput.position, result.a.startingInput.position)
+                    assertEquals((result as Either.Left<Failure<Char, Input<Char>>>).a.remainingInput.position, result.a.failedAtInput.position)
                     { "Remaining input of a failed ItemParser should be at the same position as the starting input" }
                 }
         )
@@ -71,7 +71,7 @@ internal class ItemParserTest {
                     { "ItemParser result of a non-matching input should be Either.Left" }
                 },
                 {
-                    assertEquals((result as Either.Left<Failure<Char, Input<Char>>>).a.expected(), { "a" }())
+                    assertEquals((result as Either.Left<Failure<Char, Input<Char>>>).a.expected, "a")
                     { "Expected of a failed ItemParser should be the value of parser's rename" }
                 },
                 {
