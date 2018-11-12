@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  *
  ******************************************************************************/
-
+@file:JvmName("Times")
 package com.nekomatic.katarynka.core.combinators
 
 import com.nekomatic.katarynka.core.input.IInput

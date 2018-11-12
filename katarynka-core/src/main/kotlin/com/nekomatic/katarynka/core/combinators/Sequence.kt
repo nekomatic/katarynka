@@ -44,7 +44,7 @@ import com.nekomatic.katarynka.core.result.Success
  * @return Parser<TItem, TIn, List<A>>
  */
 fun <TItem : Any, TIn, A : Any> List<Parser<TItem, TIn, A>>.sequence(): Parser<TItem, TIn, List<A>> where TIn : IInput<TItem, TIn> {
-    fun f(input: TIn, name: String): parserResult<TItem, TIn, List<A>> =
+    fun f(input: TIn): parserResult<TItem, TIn, List<A>> =
             this.foldM(Either.monadError(), Success<TItem, TIn, List<A>>(listOf(), input, input) { listOf() })
             { s, p ->
                 p.parse(s.remainingInput)
@@ -59,6 +59,6 @@ fun <TItem : Any, TIn, A : Any> List<Parser<TItem, TIn, A>>.sequence(): Parser<T
 
     return Parser(
             name = this.joinToString("") { it.name },
-            parserFunction = { input, name -> f(input, name) })
+            parserFunction = { input, _ -> f(input) })
 }
 

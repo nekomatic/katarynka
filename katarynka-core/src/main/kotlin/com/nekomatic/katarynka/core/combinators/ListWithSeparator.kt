@@ -30,7 +30,7 @@ package com.nekomatic.katarynka.core.combinators
 import com.nekomatic.katarynka.core.input.IInput
 import com.nekomatic.katarynka.core.parsers.Parser
 
-//TODO: create tests
+
 //TODO: create documentation
 /**
  *
