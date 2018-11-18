@@ -26,18 +26,20 @@ package com.nekomatic.katarynka.core.result
 
 import com.nekomatic.katarynka.core.input.IInput
 
-//TODO: create documentation
+
 /**
  *
- * @param TItem : Any
+ * @param TItem
  * @param TIn
- * @property expected Function0<String>
+ * @property expected String
  * @property failedAtInput TIn
  * @property remainingInput TIn
+ * @property innerFailures List<Failure<TItem, TIn>>
  * @constructor
  */
-data class Failure<TItem : Any, TIn>(
+data class Failure<TItem, TIn>(
         val expected: String,
         val failedAtInput: TIn,
-        val remainingInput: TIn
+        val remainingInput: TIn,
+        val innerFailures: List<Failure<TItem, TIn>> = listOf()
 ) where TIn : IInput<TItem, TIn>

@@ -28,19 +28,19 @@ package com.nekomatic.katarynka.core.combinators
 
 import arrow.core.Either
 import arrow.core.left
-import com.nekomatic.katarynka.core.result.Failure
 import com.nekomatic.katarynka.core.input.IInput
-import com.nekomatic.katarynka.core.result.Success
 import com.nekomatic.katarynka.core.parsers.AnyParser
 import com.nekomatic.katarynka.core.parsers.Parser
+import com.nekomatic.katarynka.core.result.Failure
+import com.nekomatic.katarynka.core.result.Success
 
-//TODO: create documentation
+
 /**
  *
  * @receiver Parser<TItem, TIn, A>
  * @return Parser<TItem, TIn, TItem>
  */
-fun <TItem : Any, TIn, A : Any> Parser<TItem, TIn, A>.not(): Parser<TItem, TIn, TItem> where TIn : IInput<TItem, TIn> =
+fun <TItem, TIn, A> Parser<TItem, TIn, A>.not(): Parser<TItem, TIn, TItem> where TIn : IInput<TItem, TIn> =
         Parser(
                 name = name,
                 parserFunction = fun(input: TIn, n: String): Either<Failure<TItem, TIn>, Success<TItem, TIn, out TItem>> =

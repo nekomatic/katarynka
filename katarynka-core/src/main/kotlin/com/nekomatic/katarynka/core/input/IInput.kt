@@ -26,16 +26,16 @@ package com.nekomatic.katarynka.core.input
 
 import arrow.core.Option
 
-//TODO: create documentation
+
 /**
  *
- * @param TItem : Any
+ * @param TItem
  * @param out TIn
  * @property item Option<TItem>
  * @property position Long
  * @property next TIn
  */
-interface IInput<TItem : Any, out TIn> where TIn : IInput<TItem, TIn> {
+interface IInput<TItem, out TIn> where TIn : IInput<TItem, TIn> {
     val item: Option<TItem>
     val position: Long
     val next: TIn

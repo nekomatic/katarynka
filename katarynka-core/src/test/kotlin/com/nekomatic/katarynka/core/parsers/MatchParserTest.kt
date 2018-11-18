@@ -1,11 +1,11 @@
 package com.nekomatic.katarynka.core.parsers
 
 import arrow.core.Either
-import com.nekomatic.katarynka.core.*
 import com.nekomatic.katarynka.core.input.Input
+import com.nekomatic.katarynka.core.parserResult
 import com.nekomatic.katarynka.core.result.Failure
 import com.nekomatic.katarynka.core.result.Success
-import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertAll
@@ -28,7 +28,7 @@ internal class MatchParserTest {
                 },
                 {
                     assertEquals((result as Either.Left<Failure<Char, Input<Char>>>).a.expected, { "a" }())
-                    { "Expected of a failed MatchParser should be the value of parser's rename" }
+                    { "Expected of a failed MatchParser should be the value of parser's toNamedParser" }
                 },
                 {
                     assertEquals((result as Either.Left<Failure<Char, Input<Char>>>).a.remainingInput.position, result.a.failedAtInput.position)
@@ -72,7 +72,7 @@ internal class MatchParserTest {
                 },
                 {
                     assertEquals((result as Either.Left<Failure<Char, Input<Char>>>).a.expected, "a")
-                    { "Expected of a failed MatchParser should be the value of parser's rename" }
+                    { "Expected of a failed MatchParser should be the value of parser's toNamedParser" }
                 },
                 {
                     assertEquals((result as Either.Left<Failure<Char, Input<Char>>>).a.remainingInput.position, result.a.failedAtInput.position)

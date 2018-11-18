@@ -1,15 +1,13 @@
 package com.nekomatic.katarynka.core.combinators
 
 import arrow.core.Either
-import com.nekomatic.katarynka.core.result.Failure
-import com.nekomatic.katarynka.core.input.Input
 import com.nekomatic.katarynka.core.input.LineInput
-import com.nekomatic.katarynka.core.result.Success
 import com.nekomatic.katarynka.core.parsers.ItemParser
-import org.junit.jupiter.api.Test
-
-import org.junit.jupiter.api.Assertions.*
+import com.nekomatic.katarynka.core.result.Failure
+import com.nekomatic.katarynka.core.result.Success
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.Test
 
 internal class NotCombinatorTest {
 
@@ -51,7 +49,7 @@ internal class NotCombinatorTest {
                 },
                 {
                     assertEquals((result as Either.Left<Failure<Char, LineInput<Char>>>).a.expected, "a")
-                    { "Expected of a failed Not parse should be the value of parser's rename" }
+                    { "Expected of a failed Not parse should be the value of parser's toNamedParser" }
                 },
                 {
                     assertEquals(input.position, (result as Either.Left<Failure<Char, LineInput<Char>>>).a.remainingInput.position)

@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  ******************************************************************************/
 
-@file:JvmName("Rename")
+@file:JvmName("NamedParser")
 
 package com.nekomatic.katarynka.core.combinators
 
@@ -32,20 +32,21 @@ import com.nekomatic.katarynka.core.parsers.Parser
 import com.nekomatic.katarynka.core.result.Failure
 import com.nekomatic.katarynka.core.result.Success
 
-//TODO: create documentation
 /**
  *
  * @receiver Parser<TItem, TIn, A>
  * @param name String
  * @return Parser<TItem, TIn, A>
  */
-infix fun <TItem : Any, TIn, A : Any> Parser<TItem, TIn, A>.rename(name: String): Parser<TItem, TIn, A> where TIn : IInput<TItem, TIn> {
+infix fun <TItem, TIn, A> Parser<TItem, TIn, A>.toNamedParser(name: String): Parser<TItem, TIn, A> where TIn : IInput<TItem, TIn> {
     fun f(input: TIn, name: String): Either<Failure<TItem, TIn>, Success<TItem, TIn, out A>> =
             this.parse(input).mapLeft {
                 Failure(
                         expected = name,
-                        failedAtInput = it.failedAtInput,
-                        remainingInput = it.remainingInput
+                        failedAtInput = input,
+                        remainingInput = it.remainingInput,
+                        innerFailures = listOf(it)
+
                 )
             }
     return Parser(name) { i, _ -> f(i, name) }

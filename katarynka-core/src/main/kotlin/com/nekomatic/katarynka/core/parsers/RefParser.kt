@@ -26,28 +26,21 @@ package com.nekomatic.katarynka.core.parsers
 
 import com.nekomatic.katarynka.core.input.IInput
 import com.nekomatic.katarynka.core.parserResult
-import kotlinx.coroutines.CoroutineStart
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.async
-import kotlinx.coroutines.runBlocking
 
-//TODO: create documentation
 /**
  *
- * @param TItem : Any
+ * @param TItem
  * @param TIn
- * @param A : Any
+ * @param A
  * @property innerParser Parser<TItem, TIn, A>
  * @property parser Parser<TItem, TIn, A>
  */
-class RefParser<TItem : Any, TIn, A : Any>() : ForceFailParser<TItem, TIn, A>("Reference parser not initialized") where TIn : IInput<TItem, TIn> {
+class RefParser<TItem, TIn, A> : ForceFailParser<TItem, TIn, A>("Reference parser not initialized") where TIn : IInput<TItem, TIn> {
 
     private var innerParser: Parser<TItem, TIn, A> = this
 
-    public fun set(p: Parser<TItem, TIn, A>): Parser<TItem, TIn, A> {
+    fun set(p: Parser<TItem, TIn, A>): Parser<TItem, TIn, A> {
         innerParser = p
-        //val newOne = parser
-        //return this
         return parser
     }
 
@@ -58,8 +51,6 @@ class RefParser<TItem : Any, TIn, A : Any>() : ForceFailParser<TItem, TIn, A>("R
      * @return parserResult<TItem, TIn, out A>
      */
     override fun parse(input: TIn): parserResult<TItem, TIn, out A> {
-        val t = this
-        val p = t.parser
-        return p.parserFunction(input, p.name)
+        return this.parser.parse(input)
     }
 }

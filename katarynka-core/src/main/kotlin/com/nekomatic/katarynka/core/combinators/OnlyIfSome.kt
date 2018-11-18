@@ -23,6 +23,7 @@
  *
  ******************************************************************************/
 @file:JvmName("OnlyIfSome")
+
 package com.nekomatic.katarynka.core.combinators
 
 import arrow.core.Either
@@ -34,13 +35,13 @@ import com.nekomatic.katarynka.core.parsers.Parser
 import com.nekomatic.katarynka.core.result.Failure
 import com.nekomatic.katarynka.core.result.map
 
-//TODO: create documentation
+
 /**
  *
  * @receiver Parser<TItem, TIn, Option<A>>
  * @return Parser<TItem, TIn, A>
  */
-fun <TItem : Any, TIn, A : Any> Parser<TItem, TIn, Option<A>>.onlyIfSome(): Parser<TItem, TIn, A> where TIn : IInput<TItem, TIn> =
+fun <TItem, TIn, A> Parser<TItem, TIn, Option<A>>.onlyIfSome(): Parser<TItem, TIn, A> where TIn : IInput<TItem, TIn> =
         Parser(name) { input, n ->
             this.parse(input)
                     .flatMap { success ->

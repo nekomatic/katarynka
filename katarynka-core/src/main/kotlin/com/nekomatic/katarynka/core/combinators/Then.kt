@@ -26,26 +26,27 @@
 
 package com.nekomatic.katarynka.core.combinators
 
-import arrow.core.*
+import arrow.core.Either
+import arrow.core.Tuple2
+import arrow.core.fix
 import arrow.instances.either.monad.monad
 import arrow.typeclasses.binding
-import com.nekomatic.katarynka.core.result.Failure
-import com.nekomatic.katarynka.core.result.Success
 import com.nekomatic.katarynka.core.input.IInput
 import com.nekomatic.katarynka.core.parsers.Parser
+import com.nekomatic.katarynka.core.result.Failure
+import com.nekomatic.katarynka.core.result.Success
 
 
-//TODO: create documentation
 /**
  *
  * @receiver Parser<TItem, TIn, A>
  * @param thatParser Parser<TItem, TIn, B>
  * @return Parser<TItem, TIn, Tuple2<A, B>>
  */
-infix fun <TItem : Any, TIn, A : Any, B : Any> Parser<TItem, TIn, A>.then(thatParser: Parser<TItem, TIn, B>): Parser<TItem, TIn, Tuple2<A, B>>
+infix fun <TItem, TIn, A, B> Parser<TItem, TIn, A>.then(thatParser: Parser<TItem, TIn, B>): Parser<TItem, TIn, Tuple2<A, B>>
         where TIn : IInput<TItem, TIn> {
     val thisParser = this
-    fun f(input: TIn): Either<Failure<TItem, TIn>, Success<TItem, TIn, Tuple2<A, B>>> {
+    fun f(input: TIn, n: String): Either<Failure<TItem, TIn>, Success<TItem, TIn, Tuple2<A, B>>> {
         return Either
                 .monad<Failure<TItem, TIn>>()
                 .binding {
@@ -61,16 +62,17 @@ infix fun <TItem : Any, TIn, A : Any, B : Any> Parser<TItem, TIn, A>.then(thatPa
                 .fix()
                 .mapLeft {
                     Failure(
-                            expected = it.expected,
-                            failedAtInput = it.failedAtInput,
-                            remainingInput = input
+                            expected = n,
+                            failedAtInput = input,
+                            remainingInput = input,
+                            innerFailures = listOf<Failure<TItem, TIn>>() + it
                     )
                 }
     }
 
     return Parser(
             name = this.name + thatParser.name,
-            parserFunction = { input, _ -> f(input) })
+            parserFunction = { input, n -> f(input, n) })
 }
 
 

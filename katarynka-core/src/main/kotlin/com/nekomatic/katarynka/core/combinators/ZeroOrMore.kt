@@ -26,17 +26,18 @@
 
 package com.nekomatic.katarynka.core.combinators
 
-import arrow.core.*
+import arrow.core.right
 import com.nekomatic.katarynka.core.input.IInput
-import com.nekomatic.katarynka.core.result.Success
 import com.nekomatic.katarynka.core.parsers.Parser
-//TODO: create documentation
+import com.nekomatic.katarynka.core.result.Success
+
+//TODO: replace sequence with a foldM
 /**
  *
  * @receiver Parser<TItem, TIn, A>
  * @return Parser<TItem, TIn, List<A>>
  */
-fun <TItem : Any, TIn, A : Any> Parser<TItem, TIn, A>.zeroOrMore(): Parser<TItem, TIn, List<A>> where TIn : IInput<TItem, TIn> =
+fun <TItem, TIn, A> Parser<TItem, TIn, A>.zeroOrMore(): Parser<TItem, TIn, List<A>> where TIn : IInput<TItem, TIn> =
         Parser(name) { input, _ ->
             fun nextSuccess(i: TIn): Success<TItem, TIn, out A>? = this.parse(i).fold({ null }, { it })
             generateSequence(nextSuccess(input)) { s -> nextSuccess(s.remainingInput) }

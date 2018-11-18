@@ -26,7 +26,6 @@
 package com.nekomatic.katarynka.samples.json
 
 import arrow.core.None
-import arrow.core.Option
 import arrow.core.Some
 import com.nekomatic.katarynka.arrow.flatten
 import com.nekomatic.katarynka.chars.CInput
@@ -66,11 +65,11 @@ object JsonParser : ForceFailParser<Char, CInput, JsonNode>("json") {
     private val fourDigitHex = hexDigitAsInt times 4u map { it[3] + it[2] * 16 + (it[1] + it[0] * 16) * 256 }
 
     //TODO: create tests
-    internal val jNull by lazy { PString("null") map { NullNode } rename "null" }
+    internal val jNull by lazy { PString("null") map { NullNode } toNamedParser "null" }
     private val jTrue by lazy { PString("true") map { TrueNode } }
     private val jFalse by lazy { PString("false") map { FalseNode } }
     //TODO: create tests
-    internal val jBool by lazy { jTrue.map { it as BoolNode } orElse jFalse.map { it as BoolNode } rename "bool" }
+    internal val jBool by lazy { jTrue.map { it as BoolNode } orElse jFalse.map { it as BoolNode } toNamedParser "bool" }
 
     private val lSqBr by lazy { PChar('[').token() }
     private val rSqBr by lazy { PChar(']').token() }
@@ -98,7 +97,7 @@ object JsonParser : ForceFailParser<Char, CInput, JsonNode>("json") {
 
     //TODO: create tests
     internal val jString = (PString("\"\"").toConst(StringNode(""))) orElse
-            (jStringChar.oneOrMore().surroundedBy(quote).map { StringNode(it.joinToString("")) }) rename "string"
+            (jStringChar.oneOrMore().surroundedBy(quote).map { StringNode(it.joinToString("")) }) toNamedParser "string"
 
 
     private val jNumDiscreete = zero toConst listOf('0') orElse nonZero.zeroOrMore()
@@ -124,20 +123,20 @@ object JsonParser : ForceFailParser<Char, CInput, JsonNode>("json") {
     }
 
     //TODO: create tests
-    internal val jNumber = doubleOption.onlyIfSome() map { NumberNode(it) } rename "number"
+    internal val jNumber = doubleOption.onlyIfSome() map { NumberNode(it) } toNamedParser "number"
 
     private val emptyArray = (lSqBr then rSqBr).toConst(ArrayNode(listOf()) as JsonNode)
     private val nonEmptyArray = (JNode listWithSeparator coma) suffixedBy rSqBr prefixedBy lSqBr map { ArrayNode(it) as JsonNode }
 
     //TODO: create tests
-    internal val jArrayParser = nonEmptyArray orElse emptyArray //rename "array"
+    internal val jArrayParser = nonEmptyArray orElse emptyArray //toNamedParser "array"
 
     private val jProperty = (jString suffixedBy colon) then JNode map { PropertyNode(name = it.a.value, value = it.b) }
     private val emptyObject = (lCrBr then rCrBr).toConst(ObjectNode(listOf()) as JsonNode)
     private val nonEmptyObject = (jProperty listWithSeparator coma).suffixedBy(rCrBr) prefixedBy lCrBr map { ObjectNode(it) as JsonNode }
 
     //TODO: create tests
-    internal val JObjectParser = nonEmptyObject //orElse emptyObject // rename "object"
+    internal val JObjectParser = nonEmptyObject //orElse emptyObject // toNamedParser "object"
 
     //TODO: create tests
     internal val JValue: Parser<Char, LineInput<Char>, JsonNode> =

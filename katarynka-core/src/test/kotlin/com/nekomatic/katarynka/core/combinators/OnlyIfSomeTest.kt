@@ -24,13 +24,58 @@
 
 package com.nekomatic.katarynka.core.combinators
 
+import arrow.core.Either
+import com.nekomatic.katarynka.core.input.LineInput
+import com.nekomatic.katarynka.core.parsers.ItemParser
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
-
-import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.assertAll
 
 internal class OnlyIfSomeTest {
-    //TODO: create tests
+    private val text0 = ""
+    private val textA = "a"
+    private val textB = "b"
+    private val parser = ItemParser<Char, LineInput<Char>>('a').optional().onlyIfSome()
+
+    @Suppress("UNCHECKED_CAST")
+    @DisplayName("Empty input")
     @Test
-    fun onlyIfSome() {
+    fun emptyInput() {
+        val input = LineInput.create(text0.iterator())
+        val result = parser.parse(input)
+        assertAll(
+                { assert(result is Either.Left<*>) },
+                { assertEquals("a", (result as Either.Left).a.expected) },
+                { assertEquals(input.position, (result as Either.Left).a.remainingInput.position) }
+        )
+
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    @DisplayName("Single-match input")
+    @Test
+    fun singleMatchInput() {
+        val input = LineInput.create(textA.iterator())
+        val result = parser.parse(input)
+        assertAll(
+                { assert(result is Either.Right<*>) },
+                { assertEquals('a', (result as Either.Right).b.value) },
+                { assertEquals(input.position + 1, (result as Either.Right).b.remainingInput.position) }
+        )
+    }
+
+
+    @Suppress("UNCHECKED_CAST")
+    @DisplayName("No-match input")
+    @Test
+    fun noMatchInput() {
+        val input = LineInput.create(textB.iterator())
+        val result = parser.parse(input)
+        assertAll(
+                { assert(result is Either.Left<*>) },
+                { assertEquals("a", (result as Either.Left).a.expected) },
+                { assertEquals(input.position, (result as Either.Left).a.remainingInput.position) }
+        )
     }
 }

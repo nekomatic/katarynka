@@ -30,13 +30,13 @@ import com.nekomatic.katarynka.core.input.IInput
 import com.nekomatic.katarynka.core.result.Success
 
 //TODO: Create tests
-//TODO: create documentation
+
 /**
  *
  * @param TItem : Any
  * @param TIn
  */
-open class ForceSuccessParser<TItem : Any, TIn>()
+open class ForceSuccessParser<TItem, TIn>
     : Parser<TItem, TIn, Unit>(
         name = "success",
         parserFunction = { input, _ -> Success<TItem, TIn, Unit>(Unit, input, input) { listOf<TItem>() }.right() }

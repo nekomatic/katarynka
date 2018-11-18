@@ -24,25 +24,22 @@
 
 package com.nekomatic.katarynka.core.parsers
 
-import com.nekomatic.katarynka.core.*
+import com.nekomatic.katarynka.core.ParserFunction
 import com.nekomatic.katarynka.core.input.IInput
+import com.nekomatic.katarynka.core.parserResult
 
-//TODO: create documentation
+
 /**
  *
- * @param TItem : Any
+ * @param TItem
  * @param TIn
- * @param TVal : Any
- * @property name Function0<String>
- * @property parserFunction Function2<TIn, Function0<String>, Either<Failure<TItem, TIn>, Success<TItem, TIn, out TVal>>>
+ * @param TVal
+ * @property name String
+ * @property parserFunction Function2<TIn, String, Either<Failure<TItem, TIn>, Success<TItem, TIn, out TVal>>>
  * @constructor
  */
-open class Parser<TItem : Any, TIn, TVal : Any>(val name: String, val parserFunction: ParserFunction<TItem, TIn, TVal>)
+open class Parser<TItem, TIn, TVal>(val name: String, val parserFunction: ParserFunction<TItem, TIn, TVal>)
         where TIn : IInput<TItem, TIn> {
-
-    open suspend fun parseAsync(input: TIn): parserResult<TItem, TIn, out TVal> {
-        return parserFunction.invoke(input, name)
-    }
 
     open fun parse(input: TIn): parserResult<TItem, TIn, out TVal> {
         return parserFunction.invoke(input, name)

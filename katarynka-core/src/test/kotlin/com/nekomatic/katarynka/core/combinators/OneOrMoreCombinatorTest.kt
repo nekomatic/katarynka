@@ -1,15 +1,13 @@
 package com.nekomatic.katarynka.core.combinators
 
 import arrow.core.Either
-import com.nekomatic.katarynka.core.result.Failure
-import com.nekomatic.katarynka.core.input.Input
 import com.nekomatic.katarynka.core.input.LineInput
-import com.nekomatic.katarynka.core.result.Success
 import com.nekomatic.katarynka.core.parsers.ItemParser
-import org.junit.jupiter.api.Test
-
-import org.junit.jupiter.api.Assertions.*
+import com.nekomatic.katarynka.core.result.Failure
+import com.nekomatic.katarynka.core.result.Success
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertAll
 
 internal class OneOrMoreCombinatorTest {
@@ -32,7 +30,7 @@ internal class OneOrMoreCombinatorTest {
                 },
                 {
                     assertEquals("a", (result as Either.Left<Failure<Char, LineInput<Char>>>).a.expected)
-                    { "Expected of a failed OneOrMore parser should be the value of parser's rename" }
+                    { "Expected of a failed OneOrMore parser should be the value of parser's toNamedParser" }
                 },
                 {
                     assertEquals((result as Either.Left<Failure<Char, LineInput<Char>>>).a.remainingInput.position, result.a.failedAtInput.position)
@@ -99,7 +97,7 @@ internal class OneOrMoreCombinatorTest {
                 },
                 {
                     assertEquals("a", (result as Either.Left<Failure<Char, LineInput<Char>>>).a.expected)
-                    { "Expected of a failed OneOrMore parser should be the value of parser's rename" }
+                    { "Expected of a failed OneOrMore parser should be the value of parser's toNamedParser" }
                 },
                 {
                     assertEquals((result as Either.Left<Failure<Char, LineInput<Char>>>).a.remainingInput.position, result.a.failedAtInput.position)

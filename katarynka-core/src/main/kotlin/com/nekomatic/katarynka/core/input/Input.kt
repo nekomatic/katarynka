@@ -28,24 +28,24 @@ import arrow.core.None
 import arrow.core.Option
 import arrow.core.Some
 import arrow.core.some
-//TODO: create documentation
+
 /**
  *
- * @param TItem : Any
+ * @param TItem
  * @property item Option<TItem>
  * @property position Long
  * @property iterator Iterator<TItem>
  * @property next Input<TItem>
  * @constructor
  */
-open class Input<TItem : Any> protected constructor(
+open class Input<TItem> protected constructor(
         override val item: Option<TItem>,
         override val position: Long,
         private val iterator: Iterator<TItem>
 ) : IInput<TItem, Input<TItem>> {
 
     companion object {
-        fun <TItem : Any> create(iterator: Iterator<TItem>): Input<TItem> =
+        fun <TItem> create(iterator: Iterator<TItem>): Input<TItem> =
                 Input(
                         item = if (iterator.hasNext()) iterator.next().some() else None,
                         position = 0,

@@ -1,15 +1,13 @@
 package com.nekomatic.katarynka.core.combinators
 
 import arrow.core.Either
-import com.nekomatic.katarynka.core.result.Failure
-import com.nekomatic.katarynka.core.input.Input
 import com.nekomatic.katarynka.core.input.LineInput
-import com.nekomatic.katarynka.core.result.Success
 import com.nekomatic.katarynka.core.parsers.MatchParser
-import org.junit.jupiter.api.Test
-
-import org.junit.jupiter.api.Assertions.*
+import com.nekomatic.katarynka.core.result.Failure
+import com.nekomatic.katarynka.core.result.Success
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.Test
 
 internal class OnlyIfCombinatorTest {
     private val textEmpty = ""
@@ -29,7 +27,7 @@ internal class OnlyIfCombinatorTest {
                 },
                 {
                     assertEquals("non-zero digit", (result as Either.Left<Failure<Char, LineInput<Char>>>).a.expected)
-                    { "Expected of a failed OnlyIf parser should be the value of parser's rename" }
+                    { "Expected of a failed OnlyIf parser should be the value of parser's toNamedParser" }
                 },
                 {
                     assertEquals((result as Either.Left<Failure<Char, LineInput<Char>>>).a.remainingInput.position, result.a.failedAtInput.position)
@@ -73,7 +71,7 @@ internal class OnlyIfCombinatorTest {
                 },
                 {
                     assertEquals("non-zero digit", (result as Either.Left<Failure<Char, LineInput<Char>>>).a.expected)
-                    { "Expected of a failed OnlyIf parser should be the value of parser's rename" }
+                    { "Expected of a failed OnlyIf parser should be the value of parser's toNamedParser" }
                 },
                 {
                     assertEquals(input.position, (result as Either.Left<Failure<Char, LineInput<Char>>>).a.remainingInput.position)

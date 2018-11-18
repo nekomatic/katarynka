@@ -37,28 +37,29 @@ import com.nekomatic.katarynka.core.parsers.Parser
 import com.nekomatic.katarynka.core.result.Failure
 import com.nekomatic.katarynka.core.result.Success
 
-//TODO: create documentation
+
 /**
  *
  * @receiver List<Parser<TItem, TIn, A>>
  * @return Parser<TItem, TIn, List<A>>
  */
-fun <TItem : Any, TIn, A : Any> List<Parser<TItem, TIn, A>>.sequence(): Parser<TItem, TIn, List<A>> where TIn : IInput<TItem, TIn> {
-    fun f(input: TIn): parserResult<TItem, TIn, List<A>> =
+fun <TItem, TIn, A> List<Parser<TItem, TIn, A>>.sequence(): Parser<TItem, TIn, List<A>> where TIn : IInput<TItem, TIn> {
+    fun f(input: TIn, n: String): parserResult<TItem, TIn, List<A>> =
             this.foldM(Either.monadError(), Success<TItem, TIn, List<A>>(listOf(), input, input) { listOf() })
             { s, p ->
                 p.parse(s.remainingInput)
                         .map { Success(s.value + it.value, s.startingInput, it.remainingInput) { s.payload() + it.payload() } }
             }.fix().mapLeft {
                 Failure(
-                        expected = it.expected,
-                        failedAtInput = it.failedAtInput,
-                        remainingInput = input
+                        expected = n,
+                        failedAtInput = input,
+                        remainingInput = input,
+                        innerFailures = listOf(it)
                 )
             }
 
     return Parser(
             name = this.joinToString("") { it.name },
-            parserFunction = { input, _ -> f(input) })
+            parserFunction = { input, n -> f(input, n) })
 }
 

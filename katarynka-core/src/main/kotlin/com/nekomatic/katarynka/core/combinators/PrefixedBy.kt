@@ -37,14 +37,13 @@ import com.nekomatic.katarynka.core.result.Failure
 import com.nekomatic.katarynka.core.result.Success
 
 
-//TODO: create documentation
 /**
  *
  * @receiver Parser<TItem, TIn, A>
  * @param thatParser Parser<TItem, TIn, B>
  * @return Parser<TItem, TIn, A>
  */
-infix fun <TItem : Any, TIn, A : Any, B : Any> Parser<TItem, TIn, A>.prefixedBy(thatParser: Parser<TItem, TIn, B>): Parser<TItem, TIn, A>
+infix fun <TItem, TIn, A, B> Parser<TItem, TIn, A>.prefixedBy(thatParser: Parser<TItem, TIn, B>): Parser<TItem, TIn, A>
         where TIn : IInput<TItem, TIn> {
     val thisParser = this
     fun f(input: TIn): Either<Failure<TItem, TIn>, Success<TItem, TIn, A>> {

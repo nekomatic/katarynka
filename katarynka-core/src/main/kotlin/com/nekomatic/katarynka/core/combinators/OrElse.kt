@@ -30,28 +30,36 @@ import arrow.core.Either
 import com.nekomatic.katarynka.core.input.IInput
 import com.nekomatic.katarynka.core.parserResult
 import com.nekomatic.katarynka.core.parsers.Parser
+import com.nekomatic.katarynka.core.result.Failure
 
-//TODO: create documentation
+
 /**
  *
  * @receiver Parser<TItem, TIn, A>
  * @param thatParser Parser<TItem, TIn, A>
  * @return Parser<TItem, TIn, A>
  */
-infix fun <TItem : Any, TIn, A : Any> Parser<TItem, TIn, A>.orElse(thatParser: Parser<TItem, TIn, A>): Parser<TItem, TIn, A>
+infix fun <TItem, TIn, A> Parser<TItem, TIn, A>.orElse(thatParser: Parser<TItem, TIn, A>): Parser<TItem, TIn, A>
         where TIn : IInput<TItem, TIn> {
 
-    fun f(input: TIn): parserResult<TItem, TIn, out A> {
+    fun f(input: TIn, name: String): parserResult<TItem, TIn, out A> {
         val r1 = this.parse(input)
         return when (r1) {
             is Either.Right -> r1
-            else -> thatParser.parse(input)
+            is Either.Left -> thatParser.parse(input)
+        }.mapLeft {
+            Failure(
+                    expected = name,
+                    failedAtInput = input,
+                    remainingInput = input,
+                    innerFailures = listOf<Failure<TItem, TIn>>() + (r1 as Either.Left).a + it
+            )
         }
     }
 
     return Parser(
             name = "${this.name} or ${thatParser.name}",
-            parserFunction = { input, _ -> f(input) })
+            parserFunction = { input, name -> f(input, name) })
 }
 
 

@@ -25,12 +25,9 @@
 package com.nekomatic.katarynka.core.combinators
 
 import arrow.core.Either
-import com.nekomatic.katarynka.core.input.Input
 import com.nekomatic.katarynka.core.input.LineInput
 import com.nekomatic.katarynka.core.parserResult
 import com.nekomatic.katarynka.core.parsers.ItemParser
-import com.nekomatic.katarynka.core.result.Failure
-import com.nekomatic.katarynka.core.result.Success
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.DisplayName
@@ -56,7 +53,7 @@ internal class SequenceTest {
                 {
                     assertEquals(
                             "abcd".toList(),
-                            (result as Either.Right<Success<Char, Input<Char>, String>>).b.value.toList(),
+                            (result as Either.Right).b.value.toList(),
                             "the result value should be equal to the requested items sequence"
                     )
 
@@ -72,13 +69,8 @@ internal class SequenceTest {
         val result: parserResult<Char, LineInput<Char>, out String> = parser.parse(input)
         assertAll(
                 { assertTrue(result is Either.Left<*>, "result should be Either.Left") },
-                {
-                    assertEquals(
-                            "d",
-                            (result as Either.Left<Failure<Char, Input<Char>>>).a.expected,
-                            "the expected value should be equal to the requested items sequence"
-                    )
-                }
+                { assertEquals("d", (result as Either.Left).a.expected, "the expected value should be equal to the requested items in the sequence") },
+                { assertEquals(3, (result as Either.Left).a.failedAtInput.position) }
         )
     }
 }

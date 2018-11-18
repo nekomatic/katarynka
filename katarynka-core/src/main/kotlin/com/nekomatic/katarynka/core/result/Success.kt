@@ -26,19 +26,18 @@ package com.nekomatic.katarynka.core.result
 
 import com.nekomatic.katarynka.core.input.IInput
 
-//TODO: create documentation
 /**
  *
- * @param TItem : Any
+ * @param TItem
  * @param TIn
- * @param A : Any
+ * @param A
  * @property value A
  * @property startingInput TIn
  * @property remainingInput TIn
  * @property payload Function0<List<TItem>>
  * @constructor
  */
-data class Success<TItem : Any, TIn, A : Any>(
+data class Success<TItem, TIn, A>(
         val value: A,
         val startingInput: TIn,
         val remainingInput: TIn,

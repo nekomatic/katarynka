@@ -25,19 +25,18 @@
 package com.nekomatic.katarynka.core.parsers
 
 import arrow.core.left
-import com.nekomatic.katarynka.core.result.Failure
 import com.nekomatic.katarynka.core.input.IInput
+import com.nekomatic.katarynka.core.result.Failure
 
 //TODO: Create tests
-//TODO: create documentation
 /**
  *
- * @param TItem : Any
+ * @param TItem
  * @param TIn
- * @param A : Any
+ * @param A
  * @constructor
  */
-open class ForceFailParser<TItem : Any, TIn, A : Any>(name: String)
+open class ForceFailParser<TItem, TIn, A>(name: String)
     : Parser<TItem, TIn, A>(
         name = name,
         parserFunction = { input, _ -> Failure<TItem, TIn>(name, input, input).left() }

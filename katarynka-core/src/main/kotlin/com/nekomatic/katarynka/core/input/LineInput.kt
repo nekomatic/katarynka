@@ -30,10 +30,10 @@ import arrow.core.Some
 import com.nekomatic.katarynka.core.parsers.ForceFailParser
 import com.nekomatic.katarynka.core.parsers.Parser
 
-//TODO: create documentation
+
 /**
  *
- * @param TItem : Any
+ * @param TItem
  * @property baseInput Input<TItem>
  * @property line Long
  * @property column Long
@@ -45,7 +45,7 @@ import com.nekomatic.katarynka.core.parsers.Parser
  * @property next LineInput<TItem>
  * @constructor
  */
-class LineInput<TItem : Any> private constructor(
+class LineInput<TItem> private constructor(
         private val baseInput: Input<TItem>,
         override val line: Long = 1,
         override val column: Long = 1,
@@ -62,7 +62,7 @@ class LineInput<TItem : Any> private constructor(
          * The returned value shoul dintcate the ddistance from the current item to the last item of the line break sequence
          * @return LineInput<TItem>
          */
-        fun <TItem : Any> create(iterator: Iterator<TItem>, eolParser: Parser<TItem, Input<TItem>, Long>): LineInput<TItem> =
+        fun <TItem> create(iterator: Iterator<TItem>, eolParser: Parser<TItem, Input<TItem>, Long>): LineInput<TItem> =
                 LineInput(
                         baseInput = Input.create(iterator),
                         eolParser = eolParser
@@ -73,7 +73,7 @@ class LineInput<TItem : Any> private constructor(
          * @param iterator Iterator<TItem>
          * @return LineInput<TItem>
          */
-        fun <TItem : Any> create(iterator: Iterator<TItem>): LineInput<TItem> =
+        fun <TItem> create(iterator: Iterator<TItem>): LineInput<TItem> =
                 LineInput(
                         baseInput = Input.create(iterator),
                         eolParser = ForceFailParser("eol"),

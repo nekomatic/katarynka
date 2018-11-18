@@ -1,11 +1,10 @@
 package com.nekomatic.katarynka.core.combinators
 
 import arrow.core.Either
-import com.nekomatic.katarynka.core.result.Failure
-import com.nekomatic.katarynka.core.input.Input
 import com.nekomatic.katarynka.core.input.LineInput
-import com.nekomatic.katarynka.core.result.Success
 import com.nekomatic.katarynka.core.parsers.ItemParser
+import com.nekomatic.katarynka.core.result.Failure
+import com.nekomatic.katarynka.core.result.Success
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
@@ -39,7 +38,7 @@ internal class InPlaceCombinatorTest {
     @DisplayName("Name combinator")
     @Test
     fun name() {
-        val named = parser rename "Char 'a'"
+        val named = parser toNamedParser "Char 'a'"
         val input = LineInput.create(textB.iterator())
         val result = named.parse(input)
         assertAll(
