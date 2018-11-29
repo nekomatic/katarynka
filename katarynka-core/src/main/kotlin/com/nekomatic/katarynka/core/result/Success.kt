@@ -24,7 +24,10 @@
 
 package com.nekomatic.katarynka.core.result
 
+import arrow.core.Option
 import com.nekomatic.katarynka.core.input.IInput
+
+//TODO: wrap payload in an option
 
 /**
  *
@@ -34,12 +37,12 @@ import com.nekomatic.katarynka.core.input.IInput
  * @property value A
  * @property startingInput TIn
  * @property remainingInput TIn
- * @property payload Function0<List<TItem>>
+ * @property payload Option<List<TItem>>
  * @constructor
  */
 data class Success<TItem, TIn, A>(
         val value: A,
         val startingInput: TIn,
         val remainingInput: TIn,
-        val payload: () -> List<TItem>
+        val payload: Option<List<TItem>>
 ) where TIn : IInput<TItem, TIn>

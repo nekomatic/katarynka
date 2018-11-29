@@ -1,7 +1,7 @@
 /*******************************************************************************
  * The MIT License
  *
- * Copyright (c) 2018 nekomatic.
+ * Copyright (c) 2018. nekomatic.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,17 +22,31 @@
  * THE SOFTWARE.
  ******************************************************************************/
 
-package com.nekomatic.katarynka.core.parsers
+package com.nekomatic.katarynka.core
 
 import com.nekomatic.katarynka.core.input.IInput
-import com.nekomatic.katarynka.core.standardParserFunction
 
 /**
  *
  * @param TItem
  * @param TIn
+ * @param TVal
+ * @property name String
+ * @property factory ParserFactory<TItem, TIn>
+ * @property parserFunction Function2<TIn, String, Either<NonEmptyList<Failure<TItem, TIn>>, Success<TItem, TIn, out TVal>>>
  * @constructor
  */
-open class AnyParser<TItem, TIn>(name: String)
-    : Parser<TItem, TIn, TItem>(name, { input, n -> standardParserFunction(input, n) { true } })
-        where TIn : IInput<TItem, TIn>
+class Parser<TItem, TIn, TVal>(
+        override val name: String,
+        override val factory: ParserFactory<TItem, TIn>,
+        override val parserFunction: ParserFunction<TItem, TIn, TVal>) : IParser<TItem, TIn, TVal> where TIn : IInput<TItem, TIn> {
+
+
+    override fun parse(input: TIn, factory: ParserFactory<TItem, TIn>): parserResult<TItem, TIn, out TVal> {
+        return parserFunction.invoke(input, name, factory)
+    }
+
+    override fun parse(input: TIn): parserResult<TItem, TIn, out TVal> {
+        return parserFunction.invoke(input, name, this.factory)
+    }
+}

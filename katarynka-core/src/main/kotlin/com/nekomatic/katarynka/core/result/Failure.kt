@@ -33,13 +33,9 @@ import com.nekomatic.katarynka.core.input.IInput
  * @param TIn
  * @property expected String
  * @property failedAtInput TIn
- * @property remainingInput TIn
- * @property innerFailures List<Failure<TItem, TIn>>
  * @constructor
  */
 data class Failure<TItem, TIn>(
         val expected: String,
-        val failedAtInput: TIn,
-        val remainingInput: TIn,
-        val innerFailures: List<Failure<TItem, TIn>> = listOf()
+        val failedAtInput: TIn
 ) where TIn : IInput<TItem, TIn>

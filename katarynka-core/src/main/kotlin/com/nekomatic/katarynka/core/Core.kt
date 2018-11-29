@@ -27,32 +27,45 @@
 package com.nekomatic.katarynka.core
 
 import arrow.core.*
+import arrow.data.NonEmptyList
 import com.nekomatic.katarynka.core.input.IInput
 import com.nekomatic.katarynka.core.result.Failure
 import com.nekomatic.katarynka.core.result.Success
 
 
-typealias ParserFunction<TItem, TIn, A> = (TIn, String) -> parserResult<TItem, TIn, out A>
+typealias ParserFunction<TItem, TIn, A> = (TIn, String, factory: ParserFactory<TItem, TIn>) -> parserResult<TItem, TIn, out A>
 
 /**
  *
  * @param input TIn
- * @param name () -> String
+ * @param name String
  * @param match (TItem) -> Boolean
+ * @param factory ParserFactory<TItem, TIn>
  * @return parserResult<TItem, TIn, out TItem>
  */
-fun <TItem, TIn> standardParserFunction(input: TIn, name: String, match: (TItem) -> Boolean): parserResult<TItem, TIn, out TItem>
+fun <TItem, TIn> standardParserFunction(input: TIn, name: String, match: (TItem) -> Boolean, factory: ParserFactory<TItem, TIn> = ParserFactory()): parserResult<TItem, TIn, out TItem>
         where TIn : IInput<TItem, TIn> {
     val currentItem = input.item
     return when (currentItem) {
-        None -> Failure(expected = name, failedAtInput = input, remainingInput = input).left()
+        None -> NonEmptyList.of(Failure(
+                expected = name,
+                failedAtInput = input
+        )).left()
         is Some -> {
             val current = currentItem.t
             if (match(current)) {
                 val remaining = input.next
-                Success(value = current, startingInput = input, remainingInput = remaining, payload = { listOf(current) }).right()
+                Success(
+                        value = current,
+                        startingInput = input,
+                        remainingInput = remaining,
+                        payload = if (factory.keepPayload) listOf(current).some() else None
+                ).right()
             } else
-                Failure(expected = name, failedAtInput = input, remainingInput = input).left()
+                NonEmptyList.of(Failure(
+                        expected = name,
+                        failedAtInput = input
+                )).left()
         }
     }
 }
@@ -60,21 +73,29 @@ fun <TItem, TIn> standardParserFunction(input: TIn, name: String, match: (TItem)
 /**
  *
  * @param input TIn
- * @param name () -> String
+ * @param name String
+ * @param factory ParserFactory<TItem, TIn>
  * @return parserResult<TItem, TIn, out EOF>
  */
-fun <TItem, TIn> eofParserFunction(input: TIn, name: String): parserResult<TItem, TIn, out EOF>
+fun <TItem, TIn> eofParserFunction(input: TIn, name: String, factory: ParserFactory<TItem, TIn> = ParserFactory()): parserResult<TItem, TIn, out EOF>
         where TIn : IInput<TItem, TIn> {
     return when (input.item) {
-        None -> Success(value = EOF, startingInput = input, remainingInput = input, payload = { listOf() }).right()
-        is Some -> Failure(expected = name, failedAtInput = input, remainingInput = input).left()
+        None -> Success(
+                value = EOF,
+                startingInput = input,
+                remainingInput = input,
+                payload = if (factory.keepPayload) listOf<TItem>().some() else None
+        ).right()
+        is Some -> NonEmptyList.of(Failure(
+                expected = name,
+                failedAtInput = input
+        )).left()
     }
 }
 
 object EOF
 
-typealias parserResult<TItem, TIn, TVal> = Either<Failure<TItem, TIn>, Success<TItem, TIn, TVal>>
-
+typealias parserResult<TItem, TIn, TVal> = Either<NonEmptyList<Failure<TItem, TIn>>, Success<TItem, TIn, TVal>>
 
 
 

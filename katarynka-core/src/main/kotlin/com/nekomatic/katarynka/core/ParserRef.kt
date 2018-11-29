@@ -1,7 +1,7 @@
 /*******************************************************************************
  * The MIT License
  *
- * Copyright (c) 2018 nekomatic.
+ * Copyright (c) 2018. nekomatic.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,27 +22,45 @@
  * THE SOFTWARE.
  ******************************************************************************/
 
-package com.nekomatic.katarynka.core.parsers
+package com.nekomatic.katarynka.core
 
-import com.nekomatic.katarynka.core.ParserFunction
+
+import arrow.core.None
+import arrow.core.Option
+import arrow.core.Some
+import arrow.core.some
 import com.nekomatic.katarynka.core.input.IInput
-import com.nekomatic.katarynka.core.parserResult
 
-
-/**
- *
- * @param TItem
- * @param TIn
- * @param TVal
- * @property name String
- * @property parserFunction Function2<TIn, String, Either<Failure<TItem, TIn>, Success<TItem, TIn, out TVal>>>
- * @constructor
- */
-open class Parser<TItem, TIn, TVal>(val name: String, val parserFunction: ParserFunction<TItem, TIn, TVal>)
+//TODO: validate reference parser
+class ParserRef<TItem, TIn, A>(override val factory: ParserFactory<TItem, TIn>) : IParser<TItem, TIn, A>
         where TIn : IInput<TItem, TIn> {
 
-    open fun parse(input: TIn): parserResult<TItem, TIn, out TVal> {
-        return parserFunction.invoke(input, name)
+    private val parser by lazy {
+        synchronized(innerParser) {
+            when (innerParser) {
+                is Some -> (innerParser as Some).t
+                is None -> factory.failing("Reference parser not initialised")
+            }
+        }
     }
+
+    fun set(p: IParser<TItem, TIn, A>): IParser<TItem, TIn, A> {
+        synchronized(innerParser) {
+            innerParser = p.some()
+            return parser
+        }
+    }
+
+    override val name: String = ""
+
+
+    override val parserFunction: ParserFunction<TItem, TIn, A> = factory.failing<A>("").parserFunction
+
+    override fun parse(input: TIn): parserResult<TItem, TIn, out A> = parse(input, factory)
+
+    override fun parse(input: TIn, factory: ParserFactory<TItem, TIn>): parserResult<TItem, TIn, out A> = parser.parse(input, factory)
+
+    private var innerParser: Option<IParser<TItem, TIn, A>> = None
 }
+
 

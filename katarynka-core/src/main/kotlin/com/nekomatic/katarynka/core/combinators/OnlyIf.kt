@@ -26,27 +26,28 @@
 
 package com.nekomatic.katarynka.core.combinators
 
-import arrow.core.Either
 import arrow.core.flatMap
+import arrow.core.left
+import arrow.core.right
+import arrow.data.NonEmptyList
+import com.nekomatic.katarynka.core.IParser
 import com.nekomatic.katarynka.core.input.IInput
-import com.nekomatic.katarynka.core.parsers.Parser
 import com.nekomatic.katarynka.core.result.Failure
 
-
+//TODO: wrap the f into a Try
 /**
  *
- * @receiver Parser<TItem, TIn, A>
+ * @receiver IParser<TItem, TIn, A>
  * @param f (A) -> Boolean
- * @return Parser<TItem, TIn, A>
+ * @return IParser<TItem, TIn, A>
  */
-infix fun <TItem, TIn, A> Parser<TItem, TIn, A>.onlyIf(f: (A) -> Boolean): Parser<TItem, TIn, A> where TIn : IInput<TItem, TIn> =
-        Parser(name) { input, n ->
-            this.parse(input)
+infix fun <TItem, TIn, A> IParser<TItem, TIn, A>.onlyIf(f: (A) -> Boolean): IParser<TItem, TIn, A> where TIn : IInput<TItem, TIn> =
+        this.factory.parser(this.name) { input, n, fact ->
+            this.parse(input, fact)
                     .flatMap { success ->
                         when {
-                            f(success.value) -> Either.Right(success)
-                            else -> Either.Left(Failure(n, input, input))
+                            f(success.value) -> success.right()
+                            else -> NonEmptyList.of(Failure(n, input)).left()
                         }
                     }
         }
-

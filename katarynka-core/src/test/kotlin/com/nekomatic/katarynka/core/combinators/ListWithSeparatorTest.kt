@@ -25,8 +25,8 @@
 package com.nekomatic.katarynka.core.combinators
 
 import arrow.core.Either
+import com.nekomatic.katarynka.core.ParserFactory
 import com.nekomatic.katarynka.core.input.LineInput
-import com.nekomatic.katarynka.core.parsers.ItemParser
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.DisplayName
@@ -36,32 +36,46 @@ import org.junit.jupiter.api.assertAll
 internal class ListWithSeparatorTest {
 
     private val singleItemMatch = "a,b,a,a,a"
-    private val fulllMatch = "a,a,a,a,a"
+    private val fullMatch = "a,a,a,a,a"
     private val matchThenItem = "a,a,a,aa"
     private val matchThenSeparator = "a,a,a,b"
     private val separatorFirst = ",a,a,a,"
     private val noMatchFirst = "b,a,a,a,"
+    private val itemSameAsSeparator = "aaaaaaaaa"
 
-    private val parser = ItemParser<Char, LineInput<Char>>('a') listWithSeparator ItemParser<Char, LineInput<Char>>(',')
+    private val factory = ParserFactory<Char, LineInput<Char>>()
+    private val parser = factory.item('a') listWithSeparator factory.item(',')
+    private val parserItemSameAsSeparator = factory.item('a') listWithSeparator factory.item('a')
 
     @DisplayName("Single item match")
     @Test
     fun singleItemMatch() {
-        val input = LineInput.create(singleItemMatch.iterator())
+        val input = LineInput.of(singleItemMatch.iterator())
         val result = parser.parse(input)
         assertAll(
-                { assertTrue(result is Either.Right<*>) },
+                { assertTrue(result is Either.Right) },
                 { assertEquals(listOf('a'), (result as Either.Right).b.value) }
         )
     }
 
     @DisplayName("All items match")
     @Test
-    fun fulllMatch() {
-        val input = LineInput.create(fulllMatch.iterator())
+    fun fullMatch() {
+        val input = LineInput.of(fullMatch.iterator())
         val result = parser.parse(input)
         assertAll(
-                { assertTrue(result is Either.Right<*>) },
+                { assertTrue(result is Either.Right) },
+                { assertEquals(listOf('a', 'a', 'a', 'a', 'a'), (result as Either.Right).b.value) }
+        )
+    }
+
+    @DisplayName("All items match, item same as separator")
+    @Test
+    fun itemSameAsSeparator() {
+        val input = LineInput.of(itemSameAsSeparator.iterator())
+        val result = parserItemSameAsSeparator.parse(input)
+        assertAll(
+                { assertTrue(result is Either.Right) },
                 { assertEquals(listOf('a', 'a', 'a', 'a', 'a'), (result as Either.Right).b.value) }
         )
     }
@@ -69,10 +83,10 @@ internal class ListWithSeparatorTest {
     @DisplayName("Some item match followed by an item")
     @Test
     fun matchThenItem() {
-        val input = LineInput.create(matchThenItem.iterator())
+        val input = LineInput.of(matchThenItem.iterator())
         val result = parser.parse(input)
         assertAll(
-                { assertTrue(result is Either.Right<*>) },
+                { assertTrue(result is Either.Right) },
                 { assertEquals(listOf('a', 'a', 'a', 'a'), (result as Either.Right).b.value) },
                 { assertEquals(7, (result as Either.Right).b.remainingInput.position) }
         )
@@ -81,36 +95,38 @@ internal class ListWithSeparatorTest {
     @DisplayName("Some item match followed by a separator")
     @Test
     fun matchThenSeparator() {
-        val input = LineInput.create(matchThenSeparator.iterator())
+        val input = LineInput.of(matchThenSeparator.iterator())
         val result = parser.parse(input)
         assertAll(
-                { assertTrue(result is Either.Right<*>) },
+                { assertTrue(result is Either.Right) },
                 { assertEquals(listOf('a', 'a', 'a'), (result as Either.Right).b.value) },
                 { assertEquals(5, (result as Either.Right).b.remainingInput.position) }
         )
     }
 
-    @DisplayName("Fisrt item is a separator")
+    @DisplayName("First item is a separator")
     @Test
     fun separatorFirst() {
-        val input = LineInput.create(separatorFirst.iterator())
+        val input = LineInput.of(separatorFirst.iterator())
         val result = parser.parse(input)
         assertAll(
-                { assertTrue(result is Either.Left<*>) },
-                { assertEquals("a", (result as Either.Left).a.expected) },
-                { assertEquals(0, (result as Either.Left).a.remainingInput.position) }
+                { assertTrue(result is Either.Left) },
+                { assertEquals("a", (result as Either.Left).a.head.expected) },
+                { assertEquals(0, (result as Either.Left).a.head.failedAtInput.position) },
+                { assertEquals(1, (result as Either.Left).a.size) }
         )
     }
 
-    @DisplayName("Fisrt item is a non match")
+    @DisplayName("First item is a non a match")
     @Test
     fun noMatchFirst() {
-        val input = LineInput.create(noMatchFirst.iterator())
+        val input = LineInput.of(noMatchFirst.iterator())
         val result = parser.parse(input)
         assertAll(
-                { assertTrue(result is Either.Left<*>) },
-                { assertEquals("a", (result as Either.Left).a.expected) },
-                { assertEquals(0, (result as Either.Left).a.remainingInput.position) }
+                { assertTrue(result is Either.Left) },
+                { assertEquals("a", (result as Either.Left).a.head.expected) },
+                { assertEquals(0, (result as Either.Left).a.head.failedAtInput.position) },
+                { assertEquals(1, (result as Either.Left).a.size) }
         )
     }
 }

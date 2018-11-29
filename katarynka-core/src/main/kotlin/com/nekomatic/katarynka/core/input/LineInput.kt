@@ -24,11 +24,8 @@
 
 package com.nekomatic.katarynka.core.input
 
-import arrow.core.Either
-import arrow.core.None
-import arrow.core.Some
-import com.nekomatic.katarynka.core.parsers.ForceFailParser
-import com.nekomatic.katarynka.core.parsers.Parser
+import arrow.core.*
+import com.nekomatic.katarynka.core.IParser
 
 
 /**
@@ -38,7 +35,7 @@ import com.nekomatic.katarynka.core.parsers.Parser
  * @property line Long
  * @property column Long
  * @property lastKnownEolPosition Long
- * @property eolParser Parser<TItem, Input<TItem>, Long>
+ * @property eolParser Option<IParser<TItem, Input<TItem>, Long>>
  * @property ignoreEolParser Boolean
  * @property item Option<TItem>
  * @property position Long
@@ -50,7 +47,7 @@ class LineInput<TItem> private constructor(
         override val line: Long = 1,
         override val column: Long = 1,
         private val lastKnownEolPosition: Long = -1,
-        val eolParser: Parser<TItem, Input<TItem>, Long>,
+        val eolParser: Option<IParser<TItem, Input<TItem>, Long>>,
         private val ignoreEolParser: Boolean = false
 ) : ILineInput<TItem, LineInput<TItem>> {
 
@@ -62,10 +59,11 @@ class LineInput<TItem> private constructor(
          * The returned value shoul dintcate the ddistance from the current item to the last item of the line break sequence
          * @return LineInput<TItem>
          */
-        fun <TItem> create(iterator: Iterator<TItem>, eolParser: Parser<TItem, Input<TItem>, Long>): LineInput<TItem> =
+        fun <TItem> of(iterator: Iterator<TItem>, eolParser: IParser<TItem, Input<TItem>, Long>): LineInput<TItem> =
                 LineInput(
-                        baseInput = Input.create(iterator),
-                        eolParser = eolParser
+                        baseInput = Input.of(iterator),
+                        eolParser = eolParser.some(),
+                        lastKnownEolPosition = -1
                 )
 
         /**
@@ -73,10 +71,10 @@ class LineInput<TItem> private constructor(
          * @param iterator Iterator<TItem>
          * @return LineInput<TItem>
          */
-        fun <TItem> create(iterator: Iterator<TItem>): LineInput<TItem> =
+        fun <TItem> of(iterator: Iterator<TItem>): LineInput<TItem> =
                 LineInput(
-                        baseInput = Input.create(iterator),
-                        eolParser = ForceFailParser("eol"),
+                        baseInput = Input.of(iterator),
+                        eolParser = None,
                         ignoreEolParser = true,
                         lastKnownEolPosition = 1
                 )
@@ -89,17 +87,19 @@ class LineInput<TItem> private constructor(
         when (item) {
             is None -> this
             is Some -> {
-                val newLastKnownEolPosition: Long = if (lastKnownEolPosition < position) {
-                    val r = eolParser
-                            .parse(baseInput)
-                            .map { s -> s.value + position }
-                            .mapLeft { lastKnownEolPosition }
-                    when (r) {
-                        is Either.Left -> r.a
-                        is Either.Right -> r.b
+                val newLastKnownEolPosition: Long = when {
+                    lastKnownEolPosition < position && eolParser is Some -> {
+                        val r = eolParser.t
+                                .parse(baseInput, eolParser.t.factory)
+                                .map { s -> s.value + position }
+                                .mapLeft { lastKnownEolPosition }
+                        when (r) {
+                            is Either.Left -> r.a
+                            is Either.Right -> r.b
+                        }
                     }
-                } else
-                    lastKnownEolPosition
+                    else -> lastKnownEolPosition
+                }
 
                 LineInput(
                         baseInput = baseInput.next,

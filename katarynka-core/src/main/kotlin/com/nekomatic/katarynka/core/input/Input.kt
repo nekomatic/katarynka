@@ -45,7 +45,7 @@ open class Input<TItem> protected constructor(
 ) : IInput<TItem, Input<TItem>> {
 
     companion object {
-        fun <TItem> create(iterator: Iterator<TItem>): Input<TItem> =
+        fun <TItem> of(iterator: Iterator<TItem>): Input<TItem> =
                 Input(
                         item = if (iterator.hasNext()) iterator.next().some() else None,
                         position = 0,

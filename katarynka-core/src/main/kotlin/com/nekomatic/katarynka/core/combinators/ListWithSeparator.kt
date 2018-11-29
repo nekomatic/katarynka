@@ -27,19 +27,20 @@
 
 package com.nekomatic.katarynka.core.combinators
 
+import com.nekomatic.katarynka.core.IParser
 import com.nekomatic.katarynka.core.input.IInput
-import com.nekomatic.katarynka.core.parsers.Parser
 
 
 /**
  *
- * @receiver Parser<TItem, TIn, A>
- * @param separator Parser<TItem, TIn, B>
- * @return Parser<TItem, TIn, List<A>>
+ * @receiver IParser<TItem, TIn, A>
+ * @param separator IParser<TItem, TIn, B>
+ * @return IParser<TItem, TIn, List<A>>
  */
-infix fun <TItem, TIn, A, B> Parser<TItem, TIn, A>.listWithSeparator(separator: Parser<TItem, TIn, B>): Parser<TItem, TIn, List<A>>
+infix fun <TItem, TIn, A, B> IParser<TItem, TIn, A>.listWithSeparator(separator: IParser<TItem, TIn, B>): IParser<TItem, TIn, List<A>>
         where TIn : IInput<TItem, TIn> {
-    val p1 = this.map { listOf(it) }
-    val p2 = (separator.then(this)).zeroOrMore().map { l -> l.map { it.b } }
-    return p1 then p2 map { it.a + it.b }
+    val p1 = this sMap { listOf(it) }
+    val p2 = (separator.then(this)).zeroOrMore() sMap { l -> l.map { it.b } }
+    return p1 then p2 sMap { it.a + it.b }
 }
+

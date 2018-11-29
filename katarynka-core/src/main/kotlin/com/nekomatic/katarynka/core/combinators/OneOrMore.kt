@@ -26,13 +26,14 @@
 
 package com.nekomatic.katarynka.core.combinators
 
+import com.nekomatic.katarynka.core.IParser
 import com.nekomatic.katarynka.core.input.IInput
-import com.nekomatic.katarynka.core.parsers.Parser
 
 /**
  *
- * @receiver Parser<TItem, TIn, A>
- * @return Parser<TItem, TIn, List<A>>
+ * @receiver IParser<TItem, TIn, A>
+ * @return IParser<TItem, TIn, List<A>>
  */
-fun <TItem, TIn, A> Parser<TItem, TIn, A>.oneOrMore(): Parser<TItem, TIn, List<A>> where TIn : IInput<TItem, TIn> =
-        this then this.zeroOrMore() map { s -> listOf(s.a) + s.b }
+fun <TItem, TIn, A> IParser<TItem, TIn, A>.oneOrMore(): IParser<TItem, TIn, List<A>> where TIn : IInput<TItem, TIn> =
+        this then this.zeroOrMore() sMap { s -> listOf(s.a) + s.b }
+

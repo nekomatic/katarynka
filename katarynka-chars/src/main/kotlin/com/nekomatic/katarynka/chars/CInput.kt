@@ -2,25 +2,18 @@
 
 package com.nekomatic.katarynka.chars
 
+import com.nekomatic.katarynka.core.ParserFactory
 import com.nekomatic.katarynka.core.combinators.orElse
-import com.nekomatic.katarynka.core.combinators.toNamedParser
 import com.nekomatic.katarynka.core.combinators.then
 import com.nekomatic.katarynka.core.combinators.toConst
 import com.nekomatic.katarynka.core.input.Input
 import com.nekomatic.katarynka.core.input.LineInput
-import com.nekomatic.katarynka.core.parsers.ItemParser
-import com.nekomatic.katarynka.core.parsers.Parser
-import com.nekomatic.katarynka.core.result.Success
+import com.nekomatic.katarynka.core.of
 
 typealias CInput = LineInput<Char>
 
-
-val CInputEolParser = Parser(
-        name = "eol",
-        parserFunction = { i: Input<Char>, _ ->
-            val eol = ((ItemParser<Char, Input<Char>>('\r') then ItemParser<Char, Input<Char>>('\n')).toConst('\n')
-                    orElse ItemParser<Char, Input<Char>>('\n')
-                    orElse ItemParser<Char, Input<Char>>('\r')) toNamedParser "end of line"
-            eol.parse(i).map { Success(it.payload().size.toLong() - 1, it.startingInput, it.remainingInput, it.payload) }
-        }
-)
+val CInputEolParser = ParserFactory<Char, Input<Char>>(keepPayload = false).of {
+    (it.item('\r') then it.item('\n') toConst 1L)
+            .orElse(it.item('\n') toConst 0L)
+            .orElse(it.item('\r') toConst 0L)
+}

@@ -27,39 +27,29 @@
 package com.nekomatic.katarynka.core.combinators
 
 import arrow.core.Either
+import com.nekomatic.katarynka.core.IParser
+import com.nekomatic.katarynka.core.ParserFactory
 import com.nekomatic.katarynka.core.input.IInput
 import com.nekomatic.katarynka.core.parserResult
-import com.nekomatic.katarynka.core.parsers.Parser
-import com.nekomatic.katarynka.core.result.Failure
 
 
-/**
- *
- * @receiver Parser<TItem, TIn, A>
- * @param thatParser Parser<TItem, TIn, A>
- * @return Parser<TItem, TIn, A>
- */
-infix fun <TItem, TIn, A> Parser<TItem, TIn, A>.orElse(thatParser: Parser<TItem, TIn, A>): Parser<TItem, TIn, A>
+infix fun <TItem, TIn, A> IParser<TItem, TIn, A>.orElse(that: IParser<TItem, TIn, A>): IParser<TItem, TIn, A>
         where TIn : IInput<TItem, TIn> {
+    val thisParser = this
 
-    fun f(input: TIn, name: String): parserResult<TItem, TIn, out A> {
-        val r1 = this.parse(input)
+    fun f(input: TIn, fact: ParserFactory<TItem, TIn>): parserResult<TItem, TIn, out A> {
+        val r1 = thisParser.parse(input, fact)
         return when (r1) {
             is Either.Right -> r1
-            is Either.Left -> thatParser.parse(input)
-        }.mapLeft {
-            Failure(
-                    expected = name,
-                    failedAtInput = input,
-                    remainingInput = input,
-                    innerFailures = listOf<Failure<TItem, TIn>>() + (r1 as Either.Left).a + it
-            )
-        }
+            is Either.Left -> that.parse(input, fact)
+        }.mapLeft { it + (r1 as Either.Left).a }
     }
-
-    return Parser(
-            name = "${this.name} or ${thatParser.name}",
-            parserFunction = { input, name -> f(input, name) })
+    return thisParser.factory.parser(
+            name = "${thisParser.name} or ${that.name}",
+            parserFunction = { input, _, fact -> f(input, fact) })
 }
+
+
+
 
 

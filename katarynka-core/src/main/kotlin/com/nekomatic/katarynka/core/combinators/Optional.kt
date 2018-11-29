@@ -26,29 +26,25 @@
 
 package com.nekomatic.katarynka.core.combinators
 
-import arrow.core.*
+import arrow.core.None
+import arrow.core.Option
+import arrow.core.Some
+import arrow.core.right
+import com.nekomatic.katarynka.core.IParser
 import com.nekomatic.katarynka.core.input.IInput
-import com.nekomatic.katarynka.core.parsers.Parser
 import com.nekomatic.katarynka.core.result.Success
 import com.nekomatic.katarynka.core.result.map
 
 
 /**
  *
- * @receiver Parser<TItem, TIn, A>
- * @return Parser<TItem, TIn, Option<A>>
+ * @receiver IParser<TItem, TIn, A>
+ * @return IParser<TItem, TIn, Option<A>>
  */
-fun <TItem, TIn, A> Parser<TItem, TIn, A>.optional(): Parser<TItem, TIn, Option<A>> where TIn : IInput<TItem, TIn> {
+fun <TItem, TIn, A> IParser<TItem, TIn, A>.optional(): IParser<TItem, TIn, Option<A>> where TIn : IInput<TItem, TIn> =
 
-
-    return Parser(
-            name = name,
-            parserFunction = { input: TIn, _ ->
-                val r = this.parse(input)
-                when (r) {
-                    is Either.Left -> Success(None, input, input) { listOf() }.right()
-                    is Either.Right -> r.map { s -> s.map { v -> Some(v) } }
-                }
-            }
-    )
-}
+        this.factory.parser(name = this.name) { input: TIn, _, fact ->
+            this.parse(input, fact).fold(
+                    ifLeft = { Success(None, input, input, if (this.factory.keepPayload) Some(listOf()) else None).right() },
+                    ifRight = { it.map { v -> Some(v) }.right() })
+        }

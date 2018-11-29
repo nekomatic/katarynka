@@ -26,53 +26,53 @@
 
 package com.nekomatic.katarynka.core.combinators
 
-import arrow.core.Either
+import arrow.core.Option
 import arrow.core.Tuple2
 import arrow.core.fix
-import arrow.instances.either.monad.monad
+import arrow.core.toTuple2
+import arrow.instances.either.monad.flatMap
+import arrow.instances.option.monad.monad
 import arrow.typeclasses.binding
+import com.nekomatic.katarynka.core.IParser
 import com.nekomatic.katarynka.core.input.IInput
-import com.nekomatic.katarynka.core.parsers.Parser
-import com.nekomatic.katarynka.core.result.Failure
 import com.nekomatic.katarynka.core.result.Success
-
 
 /**
  *
- * @receiver Parser<TItem, TIn, A>
- * @param thatParser Parser<TItem, TIn, B>
- * @return Parser<TItem, TIn, Tuple2<A, B>>
+ * @receiver IParser<TItem, TIn, A>
+ * @param that IParser<TItem, TIn, B>
+ * @param joinPayload (List<TItem>, List<TItem>) -> List<TItem>
+ * @param joinNames (String, String) -> String
+ * @return IParser<TItem, TIn, Tuple2<A, B>>
  */
-infix fun <TItem, TIn, A, B> Parser<TItem, TIn, A>.then(thatParser: Parser<TItem, TIn, B>): Parser<TItem, TIn, Tuple2<A, B>>
-        where TIn : IInput<TItem, TIn> {
-    val thisParser = this
-    fun f(input: TIn, n: String): Either<Failure<TItem, TIn>, Success<TItem, TIn, Tuple2<A, B>>> {
-        return Either
-                .monad<Failure<TItem, TIn>>()
-                .binding {
-                    val r1 = thisParser.parse(input).bind()
-                    val r2 = thatParser.parse(r1.remainingInput).bind()
-                    Success(
-                            value = Tuple2(r1.value, r2.value),
-                            startingInput = input,
-                            remainingInput = r2.remainingInput,
-                            payload = { r1.payload() + r2.payload() }
-                    )
+fun <TItem, TIn, A, B> IParser<TItem, TIn, A>.then(that: IParser<TItem, TIn, B>, joinPayload: (List<TItem>, List<TItem>) -> List<TItem>, joinNames: (String, String) -> String): IParser<TItem, TIn, Tuple2<A, B>> where TIn : IInput<TItem, TIn> =
+        this.factory.parser(
+                name = joinNames(this.name, that.name),
+                parserFunction = { input, _, fact ->
+                    this
+                            .parse(input, fact)
+                            .map { r1 -> Tuple2(r1, that.parse(r1.remainingInput, fact)) }
+                            .map { r ->
+                                r.b.map { (r.a to it).toTuple2() }
+                            }.flatMap { it }
+                            .map {
+                                Success(
+                                        value = Tuple2(it.a.value, it.b.value),
+                                        startingInput = input,
+                                        remainingInput = it.b.remainingInput,
+                                        payload = Option.monad().binding { joinPayload(it.a.payload.bind(), it.b.payload.bind()) }.fix()
+                                )
+                            }
                 }
-                .fix()
-                .mapLeft {
-                    Failure(
-                            expected = n,
-                            failedAtInput = input,
-                            remainingInput = input,
-                            innerFailures = listOf<Failure<TItem, TIn>>() + it
-                    )
-                }
-    }
+        )
 
-    return Parser(
-            name = this.name + thatParser.name,
-            parserFunction = { input, n -> f(input, n) })
-}
+/**
+ *
+ * @receiver IParser<TItem, TIn, A>
+ * @param that IParser<TItem, TIn, B>
+ * @return IParser<TItem, TIn, Tuple2<A, B>>
+ */
+infix fun <TItem, TIn, A, B> IParser<TItem, TIn, A>.then(that: IParser<TItem, TIn, B>): IParser<TItem, TIn, Tuple2<A, B>> where TIn : IInput<TItem, TIn> =
+        this.then(that, { a, b -> a + b }, { a, b -> a + b })
 
 

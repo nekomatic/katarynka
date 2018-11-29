@@ -1,7 +1,7 @@
 /*******************************************************************************
  * The MIT License
  *
- * Copyright (c) 2018 nekomatic.
+ * Copyright (c) 2018. nekomatic.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,18 +22,35 @@
  * THE SOFTWARE.
  ******************************************************************************/
 
-package com.nekomatic.katarynka.core.parsers
+package com.nekomatic.katarynka.chars
 
-import com.nekomatic.katarynka.core.EOF
-import com.nekomatic.katarynka.core.eofParserFunction
-import com.nekomatic.katarynka.core.input.IInput
+import arrow.core.getOrElse
+import arrow.data.NonEmptyList
+import com.nekomatic.katarynka.core.ParserFactory
+import com.nekomatic.katarynka.core.combinators.*
 
 
-/**
- *
- * @param TItem
- * @param TIn
- */
-open class EofParser<TItem, TIn>
-    : Parser<TItem, TIn, EOF>( "eof" , { input, n -> eofParserFunction(input, n) })
-        where TIn : IInput<TItem, TIn>
+class CFactory(keepPayload: Boolean = true) : ParserFactory<Char, CInput>(keepPayload) {
+
+    object eol
+
+    fun char(c: Char) = this.item(c)
+    val WS = this.match("whitespace") { it.isWhitespace() }
+    val WSs = (this.WS.oneOrMore() toNamedParser "whitespaces")
+    val DIGIT = this.match("digit") { it.isDigit() }
+    val LETTER_OR_DIGIT = this.match("letter or digit") { it.isLetterOrDigit() }
+
+    val LOWERCASE_CHAR = this.match("lowercase letter") { it.isLowerCase() }
+    val UPPERCASE_CHAR = this.match("uppercase letter") { it.isUpperCase() }
+    val LETTER = this.match("letter") { it.isLetter() }
+    val EOL = ((char('\r') then char('\n')).toConst(eol)
+            orElse (char('\n').toConst(eol))
+            orElse (char('\r')).toConst(eol)) toNamedParser "end of line"
+
+    fun string(value: String) = NonEmptyList.fromList(value.toList().map { char(it) })
+            .map { it.sequence().sMap { it.joinToString("") } }
+            .getOrElse { this.successful().toConst("") }
+
+
+}
+

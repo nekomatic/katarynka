@@ -1,15 +1,10 @@
 package com.nekomatic.katarynka.chars.parsers
 
 import arrow.core.Either
+import arrow.data.NonEmptyList
 import com.nekomatic.katarynka.chars.*
-import com.nekomatic.katarynka.core.combinators.map
-import com.nekomatic.katarynka.core.combinators.sequence
-import com.nekomatic.katarynka.core.input.Input
-import com.nekomatic.katarynka.core.parserResult
-import com.nekomatic.katarynka.core.parsers.ItemParser
-import com.nekomatic.katarynka.core.result.Failure
-import com.nekomatic.katarynka.core.result.Success
-import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertAll
@@ -19,13 +14,13 @@ internal class PStringTest {
     private val textABCD = "abcde".toList()
     private val textAB_D = "ab_de".toList()
 
-    private val parser = PString("abcd")
+    private val parser = CFactory().string("abcd")
 
     @Suppress("UNCHECKED_CAST")
     @DisplayName("Matching sequence")
     @Test
     fun matchingSequence() {
-        val input = CInput.create(textABCD.iterator())
+        val input = CInput.of(textABCD.iterator())
         val result: CResult<out String> = parser.parse(input)
         assertAll(
                 { assertTrue(result is Either.Right<*>, "result should be Either.Right") },
@@ -43,14 +38,14 @@ internal class PStringTest {
     @DisplayName("Non-matching seqience")
     @Test
     fun nonMatchingSequence() {
-        val input = CInput.create(textAB_D.iterator())
+        val input = CInput.of(textAB_D.iterator())
         val result: CResult<out String> = parser.parse(input)
         assertAll(
                 { assertTrue(result is Either.Left<*>, "result should be Either.Left") },
                 {
                     assertEquals(
                             "c",
-                            (result as Either.Left<CFailure>).a.expected,
+                            (result as Either.Left<NonEmptyList<CFailure>>).a.head.expected,
                             "the expected value should be equal to the requested string"
                     )
                 }

@@ -26,29 +26,23 @@
 
 package com.nekomatic.katarynka.core.combinators
 
-import arrow.core.Either
-import arrow.core.Option
-import arrow.core.Some
-import arrow.core.flatMap
+import arrow.core.*
+import arrow.data.NonEmptyList
+import com.nekomatic.katarynka.core.IParser
 import com.nekomatic.katarynka.core.input.IInput
-import com.nekomatic.katarynka.core.parsers.Parser
 import com.nekomatic.katarynka.core.result.Failure
 import com.nekomatic.katarynka.core.result.map
 
 
 /**
  *
- * @receiver Parser<TItem, TIn, Option<A>>
- * @return Parser<TItem, TIn, A>
+ * @receiver IParser<TItem, TIn, Option<A>>
+ * @return IParser<TItem, TIn, A>
  */
-fun <TItem, TIn, A> Parser<TItem, TIn, Option<A>>.onlyIfSome(): Parser<TItem, TIn, A> where TIn : IInput<TItem, TIn> =
-        Parser(name) { input, n ->
-            this.parse(input)
-                    .flatMap { success ->
-                        val value = success.value
-                        when (value) {
-                            is Some -> Either.Right(success.map { value.t })
-                            else -> Either.Left(Failure(n, input, input))
-                        }
+fun <TItem, TIn, A> IParser<TItem, TIn, Option<A>>.onlyIfSome(): IParser<TItem, TIn, A> where TIn : IInput<TItem, TIn> =
+        this.factory.parser(this.name) { input, n, fact ->
+            this.parse(input, fact)
+                    .flatMap {
+                        it.value.map { v -> (it map { v }).right() }.getOrElse { NonEmptyList.of(Failure(n, input)).left() }
                     }
         }

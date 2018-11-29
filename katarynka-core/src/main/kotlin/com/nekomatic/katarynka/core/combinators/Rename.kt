@@ -27,27 +27,32 @@
 package com.nekomatic.katarynka.core.combinators
 
 import arrow.core.Either
+import arrow.data.NonEmptyList
+import com.nekomatic.katarynka.core.IParser
+import com.nekomatic.katarynka.core.ParserFactory
 import com.nekomatic.katarynka.core.input.IInput
-import com.nekomatic.katarynka.core.parsers.Parser
 import com.nekomatic.katarynka.core.result.Failure
 import com.nekomatic.katarynka.core.result.Success
 
 /**
  *
- * @receiver Parser<TItem, TIn, A>
+ * @receiver IParser<TItem, TIn, A>
  * @param name String
- * @return Parser<TItem, TIn, A>
+ * @return IParser<TItem, TIn, A>
  */
-infix fun <TItem, TIn, A> Parser<TItem, TIn, A>.toNamedParser(name: String): Parser<TItem, TIn, A> where TIn : IInput<TItem, TIn> {
-    fun f(input: TIn, name: String): Either<Failure<TItem, TIn>, Success<TItem, TIn, out A>> =
-            this.parse(input).mapLeft {
-                Failure(
-                        expected = name,
-                        failedAtInput = input,
-                        remainingInput = it.remainingInput,
-                        innerFailures = listOf(it)
+infix fun <TItem, TIn, A> IParser<TItem, TIn, A>.toNamedParser(name: String): IParser<TItem, TIn, A> where TIn : IInput<TItem, TIn> {
 
-                )
+
+    @Suppress("UNUSED_PARAMETER")
+    fun f(input: TIn, _name: String, func: ParserFactory<TItem, TIn>): Either<NonEmptyList<Failure<TItem, TIn>>, Success<TItem, TIn, out A>> =
+            this.parse(input, func).mapLeft { failure ->
+                NonEmptyList.of(Failure(
+                        expected = name,
+                        failedAtInput = input
+                )) + failure
             }
-    return Parser(name) { i, _ -> f(i, name) }
+    return factory.parser(name, ::f)
 }
+
+
+

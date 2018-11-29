@@ -25,9 +25,10 @@
 package com.nekomatic.katarynka.core.combinators
 
 import arrow.core.Either
+import arrow.data.NonEmptyList
+import com.nekomatic.katarynka.core.ParserFactory
 import com.nekomatic.katarynka.core.input.LineInput
 import com.nekomatic.katarynka.core.parserResult
-import com.nekomatic.katarynka.core.parsers.ItemParser
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.DisplayName
@@ -36,41 +37,37 @@ import org.junit.jupiter.api.assertAll
 
 internal class SequenceTest {
 
+    fun <T> List<T>.toNelUnsafe() = NonEmptyList.fromListUnsafe(this)
+    private val factory = ParserFactory<Char, LineInput<Char>>()
+    private val textABCD = "abcde"
+    private val textAB_D = "abc_de"
 
-    private val textABCD = "abcde".toList()
-    private val textAB_D = "abc_de".toList()
+    private val parser = "abcd".map { factory.item(it) }.toNelUnsafe().sequence() sMap { c -> c.joinToString("") }
 
-    private val parser = "abcd".map { ItemParser<Char, LineInput<Char>>(it) }.sequence().map { it.joinToString("") }
 
-    @Suppress("UNCHECKED_CAST")
     @DisplayName("Matching sequence")
     @Test
     fun matchingSequence() {
-        val input = LineInput.create(textABCD.iterator())
+        val input = LineInput.of(textABCD.iterator())
         val result: parserResult<Char, LineInput<Char>, out String> = parser.parse(input)
         assertAll(
-                { assertTrue(result is Either.Right<*>, "result should be Either.Right") },
-                {
-                    assertEquals(
-                            "abcd".toList(),
-                            (result as Either.Right).b.value.toList(),
-                            "the result value should be equal to the requested items sequence"
-                    )
-
-                }
+                { assertTrue(result is Either.Right) },
+                { assertEquals("abcd", (result as Either.Right).b.value) }
         )
     }
 
-    @Suppress("UNCHECKED_CAST")
-    @DisplayName("Non-matching seqience")
+    @DisplayName("Non-matching sequence")
     @Test
     fun nonMatchingSequence() {
-        val input = LineInput.create(textAB_D.iterator())
+        val input = LineInput.of(textAB_D.iterator())
         val result: parserResult<Char, LineInput<Char>, out String> = parser.parse(input)
         assertAll(
-                { assertTrue(result is Either.Left<*>, "result should be Either.Left") },
-                { assertEquals("d", (result as Either.Left).a.expected, "the expected value should be equal to the requested items in the sequence") },
-                { assertEquals(3, (result as Either.Left).a.failedAtInput.position) }
+                { assertTrue(result is Either.Left) },
+                {
+                    val actual = (result as Either.Left).a.map { "expected '${it.expected}' at position ${it.failedAtInput.position}" }
+                    val expected = NonEmptyList.of("expected 'd' at position 3")
+                    assertEquals(expected, actual)
+                }
         )
     }
 }

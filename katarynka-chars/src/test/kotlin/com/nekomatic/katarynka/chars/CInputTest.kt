@@ -10,19 +10,19 @@ import kotlin.test.assertEquals
 internal class CInputTest {
 
 
-    private val text0 = "".toList()
-    private val text1 = "a".toList()
-    private val text2 = "ab".toList()
-    private val textEol1 = "\r\nb".toList()
+    private val text0 = ""
+    private val text1 = "a"
+    private val text2 = "ab"
+    private val textEol1 = "\r\nb"
 
     private val eolParser = CInputEolParser
 
     @DisplayName("CInput.next")
     @Test
     fun getNext() {
-        val input0 = CInput.create(text0.iterator(), eolParser).next
-        val input1 = CInput.create(text1.iterator(), eolParser).next
-        val input2 = CInput.create(text2.iterator(), eolParser).next
+        val input0 = CInput.of(text0.iterator(), eolParser).next
+        val input1 = CInput.of(text1.iterator(), eolParser).next
+        val input2 = CInput.of(text2.iterator(), eolParser).next
 
         assertAll(
                 { assertEquals(None, input0.item, "Next of an empty CInput should None item (should be empty)") },
@@ -34,9 +34,9 @@ internal class CInputTest {
     @DisplayName("CInput.item")
     @Test
     fun getItem() {
-        val input0 = CInput.create(text0.iterator(), eolParser)
-        val input1 = CInput.create(text1.iterator(), eolParser)
-        val input2 = CInput.create(text2.iterator(), eolParser)
+        val input0 = CInput.of(text0.iterator(), eolParser)
+        val input1 = CInput.of(text1.iterator(), eolParser)
+        val input2 = CInput.of(text2.iterator(), eolParser)
 
         assertAll(
                 { assertEquals(None, input0.item, "Item of an empty CInput should be None") },
@@ -48,12 +48,12 @@ internal class CInputTest {
     @DisplayName("CInput.position")
     @Test
     fun getPosition() {
-        val input0 = CInput.create(text0.iterator(), eolParser)
+        val input0 = CInput.of(text0.iterator(), eolParser)
         val input0next = input0.next
-        val input1 = CInput.create(text1.iterator(), eolParser)
+        val input1 = CInput.of(text1.iterator(), eolParser)
         val input1next = input1.next
         val input1nextnext = input1next.next
-        val input2 = CInput.create(text2.iterator(), eolParser)
+        val input2 = CInput.of(text2.iterator(), eolParser)
         val input2next = input2.next
 
         assertAll(
@@ -71,11 +71,11 @@ internal class CInputTest {
     @DisplayName("CInput.line with eol detection")
     @Test
     fun getLineEol() {
-        val input0 = CInput.create(text0.iterator(), eolParser)
-        val input1 = CInput.create(text1.iterator(), eolParser)
-        val input2 = CInput.create(text2.iterator(), eolParser)
+        val input0 = CInput.of(text0.iterator(), eolParser)
+        val input1 = CInput.of(text1.iterator(), eolParser)
+        val input2 = CInput.of(text2.iterator(), eolParser)
 
-        val inputEol1_l0a = CInput.create(textEol1.iterator(), eolParser)
+        val inputEol1_l0a = CInput.of(textEol1.iterator(), eolParser)
         val inputEol1_l0b = inputEol1_l0a.next
         val inputEol1_l1 = inputEol1_l0b.next
 
@@ -92,11 +92,11 @@ internal class CInputTest {
     @DisplayName("CInput.column with eol detection")
     @Test
     fun getColumnEol() {
-        val input0 = CInput.create(text0.iterator(), eolParser)
-        val input1 = CInput.create(text1.iterator(), eolParser)
-        val input2 = CInput.create(text2.iterator(), eolParser)
+        val input0 = CInput.of(text0.iterator(), eolParser)
+        val input1 = CInput.of(text1.iterator(), eolParser)
+        val input2 = CInput.of(text2.iterator(), eolParser)
 
-        val inputEol2_l1a = CInput.create(textEol1.iterator(), eolParser)
+        val inputEol2_l1a = CInput.of(textEol1.iterator(), eolParser)
         val inputEol2_l1b = inputEol2_l1a.next
         val inputEol2_l2 = inputEol2_l1b.next
 
@@ -113,11 +113,11 @@ internal class CInputTest {
     @DisplayName("CInput.line with no eol detection")
     @Test
     fun getLineNoEol() {
-        val input0 = CInput.create(text0.iterator())
-        val input1 = CInput.create(text1.iterator())
-        val input2 = CInput.create(text2.iterator())
+        val input0 = CInput.of(text0.iterator())
+        val input1 = CInput.of(text1.iterator())
+        val input2 = CInput.of(text2.iterator())
 
-        val inputEol1_l0a = CInput.create(textEol1.iterator())
+        val inputEol1_l0a = CInput.of(textEol1.iterator())
         val inputEol1_l0b = inputEol1_l0a.next
         val inputEol1_l1 = inputEol1_l0b.next
 
@@ -134,11 +134,11 @@ internal class CInputTest {
     @DisplayName("CInput.column with no eol detection")
     @Test
     fun getColumn() {
-        val input0 = CInput.create(text0.iterator())
-        val input1 = CInput.create(text1.iterator())
-        val input2 = CInput.create(text2.iterator())
+        val input0 = CInput.of(text0.iterator())
+        val input1 = CInput.of(text1.iterator())
+        val input2 = CInput.of(text2.iterator())
 
-        val inputEol2_l1a = CInput.create(textEol1.iterator())
+        val inputEol2_l1a = CInput.of(textEol1.iterator())
         val inputEol2_l1b = inputEol2_l1a.next
         val inputEol2_l2 = inputEol2_l1b.next
 

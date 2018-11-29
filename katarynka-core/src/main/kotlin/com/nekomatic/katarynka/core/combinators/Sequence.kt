@@ -27,39 +27,38 @@
 package com.nekomatic.katarynka.core.combinators
 
 
-import arrow.core.Either
-import arrow.core.fix
+import arrow.core.*
+import arrow.data.NonEmptyList
 import arrow.instances.either.monadError.monadError
-import arrow.instances.list.foldable.foldM
+import arrow.instances.nonemptylist.foldable.foldM
+import arrow.instances.option.monad.monad
+import arrow.typeclasses.binding
+import com.nekomatic.katarynka.core.IParser
+import com.nekomatic.katarynka.core.ParserFactory
 import com.nekomatic.katarynka.core.input.IInput
 import com.nekomatic.katarynka.core.parserResult
-import com.nekomatic.katarynka.core.parsers.Parser
-import com.nekomatic.katarynka.core.result.Failure
 import com.nekomatic.katarynka.core.result.Success
-
 
 /**
  *
- * @receiver List<Parser<TItem, TIn, A>>
- * @return Parser<TItem, TIn, List<A>>
+ * @receiver NonEmptyList<IParser<TItem, TIn, A>>
+ * @return IParser<TItem, TIn, List<A>>
  */
-fun <TItem, TIn, A> List<Parser<TItem, TIn, A>>.sequence(): Parser<TItem, TIn, List<A>> where TIn : IInput<TItem, TIn> {
-    fun f(input: TIn, n: String): parserResult<TItem, TIn, List<A>> =
-            this.foldM(Either.monadError(), Success<TItem, TIn, List<A>>(listOf(), input, input) { listOf() })
-            { s, p ->
-                p.parse(s.remainingInput)
-                        .map { Success(s.value + it.value, s.startingInput, it.remainingInput) { s.payload() + it.payload() } }
-            }.fix().mapLeft {
-                Failure(
-                        expected = n,
-                        failedAtInput = input,
-                        remainingInput = input,
-                        innerFailures = listOf(it)
-                )
-            }
-
-    return Parser(
-            name = this.joinToString("") { it.name },
-            parserFunction = { input, n -> f(input, n) })
+fun <TItem, TIn, A> NonEmptyList<IParser<TItem, TIn, A>>.sequence(): IParser<TItem, TIn, List<A>> where TIn : IInput<TItem, TIn> {
+    fun f(input: TIn, fact: ParserFactory<TItem, TIn>): parserResult<TItem, TIn, List<A>> =
+            this.foldM(Either.monadError(), Success<TItem, TIn, List<A>>(listOf(), input, input, if (this.head.factory.keepPayload) Some(listOf()) else None))
+            { acc, p ->
+                p.parse(acc.remainingInput, fact)
+                        .map { s ->
+                            Success(
+                                    value = acc.value + s.value,
+                                    startingInput = acc.startingInput,
+                                    remainingInput = s.remainingInput,
+                                    payload = Option.monad().binding { acc.payload.bind() + s.payload.bind() }.fix())
+                        }
+            }.fix()
+    return this.head.factory.parser(
+            name = this.all.joinToString("") { p -> p.name },
+            parserFunction = { input, _, fact -> f(input, fact) })
 }
 

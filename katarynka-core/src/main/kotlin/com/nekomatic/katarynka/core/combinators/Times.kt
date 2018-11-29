@@ -26,20 +26,22 @@
 
 package com.nekomatic.katarynka.core.combinators
 
+import arrow.core.getOrElse
+import arrow.data.NonEmptyList
+import com.nekomatic.katarynka.core.IParser
 import com.nekomatic.katarynka.core.input.IInput
-import com.nekomatic.katarynka.core.parsers.ForceSuccessParser
-import com.nekomatic.katarynka.core.parsers.Parser
 
 
 /**
  *
- * @receiver Parser<TItem, TIn, A>
+ * @receiver IParser<TItem, TIn, A>
  * @param count UInt
- * @return Parser<TItem, TIn, List<A>>
+ * @return IParser<TItem, TIn, List<A>>
  */
 @ExperimentalUnsignedTypes
-infix fun <TItem, TIn, A> Parser<TItem, TIn, A>.times(count: UInt): Parser<TItem, TIn, List<A>> where TIn : IInput<TItem, TIn> =
-        if (count == 0u)
-            ForceSuccessParser<TItem, TIn>() map { listOf<A>() }
-        else
-            List(count.toInt()) { this }.sequence()
+infix fun <TItem, TIn, A> IParser<TItem, TIn, A>.times(count: UInt): IParser<TItem, TIn, List<A>> where TIn : IInput<TItem, TIn> =
+        NonEmptyList
+                .fromList(List(count.toInt()) { this })
+                .map { it.sequence() }
+                .getOrElse { this.factory.successful() sMap { listOf<A>() } }
+

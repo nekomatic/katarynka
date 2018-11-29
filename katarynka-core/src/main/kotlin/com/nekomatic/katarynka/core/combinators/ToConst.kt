@@ -26,15 +26,14 @@
 
 package com.nekomatic.katarynka.core.combinators
 
+import com.nekomatic.katarynka.core.IParser
 import com.nekomatic.katarynka.core.input.IInput
-import com.nekomatic.katarynka.core.parsers.Parser
-import com.nekomatic.katarynka.core.result.map
+
 
 /**
  *
- * @receiver Parser<TItem, TIn, A>
+ * @receiver IParser<TItem, TIn, A>
  * @param c B
- * @return Parser<TItem, TIn, B>
+ * @return IParser<TItem, TIn, B>
  */
-infix fun <TItem, TIn, A, B> Parser<TItem, TIn, A>.toConst(c: B): Parser<TItem, TIn, B> where TIn : IInput<TItem, TIn> =
-        Parser(name) { input, _ -> this.parse(input).map { s -> s.map { c } } }
+infix fun <TItem, TIn, A, B> IParser<TItem, TIn, A>.toConst(c: B): IParser<TItem, TIn, B> where TIn : IInput<TItem, TIn> = this sMap { c }

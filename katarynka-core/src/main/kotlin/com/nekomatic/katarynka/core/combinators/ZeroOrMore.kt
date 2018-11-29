@@ -26,28 +26,35 @@
 
 package com.nekomatic.katarynka.core.combinators
 
-import arrow.core.right
+import arrow.core.*
+import arrow.instances.either.monad.flatMap
+import arrow.instances.either.monadError.monadError
+import arrow.instances.option.monad.monad
+import arrow.instances.sequence.foldable.foldM
+import arrow.typeclasses.binding
+import com.nekomatic.katarynka.core.IParser
 import com.nekomatic.katarynka.core.input.IInput
-import com.nekomatic.katarynka.core.parsers.Parser
 import com.nekomatic.katarynka.core.result.Success
 
-//TODO: replace sequence with a foldM
 /**
  *
- * @receiver Parser<TItem, TIn, A>
- * @return Parser<TItem, TIn, List<A>>
+ * @receiver IParser<TItem, TIn, A>
+ * @return IParser<TItem, TIn, List<A>>
  */
-fun <TItem, TIn, A> Parser<TItem, TIn, A>.zeroOrMore(): Parser<TItem, TIn, List<A>> where TIn : IInput<TItem, TIn> =
-        Parser(name) { input, _ ->
-            fun nextSuccess(i: TIn): Success<TItem, TIn, out A>? = this.parse(i).fold({ null }, { it })
-            generateSequence(nextSuccess(input)) { s -> nextSuccess(s.remainingInput) }
-                    .fold(Success(listOf<A>(), input, input) { listOf() }) { acc, success ->
-                        Success(
-                                value = acc.value + success.value,
-                                startingInput = input,
-                                remainingInput = success.remainingInput,
-                                payload = { acc.payload() + success.payload() }
-                        )
-                    }.right()
-        }
-
+fun <TItem, TIn, A> IParser<TItem, TIn, A>.zeroOrMore(): IParser<TItem, TIn, List<A>> where TIn : IInput<TItem, TIn> =
+        this.factory.parser(
+                name = this.name,
+                parserFunction = { input, _, fact ->
+                    generateSequence(this.parse(input, fact)) { r -> r.flatMap { this.parse(it.remainingInput, fact) } }
+                            .takeWhile { it.isRight() }
+                            .foldM(Either.monadError(), Success<TItem, TIn, List<A>>(listOf(), input, input, if (this.factory.keepPayload) Some(listOf()) else None))
+                            { acc, p ->
+                                p.map { s ->
+                                    Success(
+                                            value = acc.value + s.value,
+                                            startingInput = acc.startingInput,
+                                            remainingInput = s.remainingInput,
+                                            payload = Option.monad().binding { acc.payload.bind() + s.payload.bind() }.fix())
+                                }
+                            }.fix()
+                })

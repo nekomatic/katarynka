@@ -1,7 +1,7 @@
 /*******************************************************************************
  * The MIT License
  *
- * Copyright (c) 2018 nekomatic.
+ * Copyright (c) 2018. nekomatic.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,18 +22,21 @@
  * THE SOFTWARE.
  ******************************************************************************/
 
-package com.nekomatic.katarynka.core.parsers
+@file:JvmName("Alias")
 
-import com.nekomatic.katarynka.core.input.IInput
-import com.nekomatic.katarynka.core.standardParserFunction
+package com.nekomatic.katarynka.chars
 
+import arrow.core.Either
+import arrow.data.NonEmptyList
+import com.nekomatic.katarynka.core.IParser
+import com.nekomatic.katarynka.core.result.Failure
+import com.nekomatic.katarynka.core.result.Success
 
-/**
- *
- * @param TItem : Any
- * @param TIn
- * @constructor
- */
-open class MatchParser<TItem, TIn>(name: String, match: (TItem) -> Boolean)
-    : Parser<TItem, TIn, TItem>(name, { input, n -> standardParserFunction(input, n, match) })
-        where TIn : IInput<TItem, TIn>
+typealias CSuccess<A> = Success<Char, CInput, A>
+typealias CFailure = Failure<Char, CInput>
+typealias CResult<A> = Either<NonEmptyList<CFailure>, CSuccess<A>>
+typealias CParser<A> = IParser<Char, CInput, A>
+
+interface ICParser<A> : IParser<Char, CInput, A> {
+    override val factory: CFactory
+}

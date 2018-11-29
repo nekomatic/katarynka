@@ -25,11 +25,13 @@
 package com.nekomatic.katarynka.core.parsers
 
 import arrow.core.Either
-import com.nekomatic.katarynka.core.combinators.map
+import com.nekomatic.katarynka.core.ParserFactory
+import com.nekomatic.katarynka.core.ParserRef
 import com.nekomatic.katarynka.core.combinators.orElse
+import com.nekomatic.katarynka.core.combinators.sMap
 import com.nekomatic.katarynka.core.combinators.then
-import com.nekomatic.katarynka.core.input.Input
-import kotlinx.coroutines.runBlocking
+import com.nekomatic.katarynka.core.combinators.toNamedParser
+import com.nekomatic.katarynka.core.input.LineInput
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 
@@ -38,21 +40,22 @@ sealed class Element(val name: String)
 class Leaf(val i: Int) : Element("leaf") // 1
 class Branch(val e: Element) : Element("branch") //[]
 
-class EParser() {
+class EParser {
 
-    private val elementRef = RefParser<Char, Input<Char>, Element>()
-    private val pLeaf: Parser<Char, Input<Char>, Element> by lazy { MatchParser<Char, Input<Char>>("leaf") { it.isDigit() } map { (it - '0').toInt() } map { Leaf(it) as Element } }
-    private val pBranch: Parser<Char, Input<Char>, Element> by lazy {
-        ItemParser<Char, Input<Char>>('[') then
-                elementRef then
-                ItemParser<Char, Input<Char>>(']') map
-                { it.a.b } map
-                { Branch(it) as Element }
+    private val factory = ParserFactory<Char, LineInput<Char>>()
+    private val elementRef: ParserRef<Char, LineInput<Char>, Element> = factory.ref()
+    val pLeaf by lazy {
+        factory.match("leaf") { it.isDigit() } sMap { (it - '0') } sMap { Leaf(it) as Element }
+    }
+    private val pBranch by lazy {
+        factory.item('[') then
+                elementRef then factory.item(']') sMap { it.a.b } sMap { Branch(it) as Element } toNamedParser "branch"
     }
     val elementParser by lazy { pBranch orElse pLeaf }
 
     init {
-        runBlocking { elementRef.set(elementParser) }
+
+        elementRef.set(elementParser)
     }
 }
 
@@ -62,32 +65,44 @@ internal class RefParserTest {
     private val text0 = "1".toList()
     private val text1 = "[1]".toList()
     private val text2 = "[[[[[[[[[1]]]]]]]]]".toList()
+    private val text3 = "[[_]]".toList()
     private val parser = EParser().elementParser
 
     @Test
     fun basicTest() {
-        val input = Input.create(text0.iterator())
-//        val result = runBlocking { parser.parseAsync(input) }
-        val x = parser.parse(input)
-//        val expected = if (result is Either.Left) result.a.expected() else ""
-        assertTrue(x is Either.Right)
+        val input = LineInput.of(text0.iterator())
+        val result = parser.parse(input)
+        assertTrue(result is Either.Right)
+    }
+
+    @Test
+    fun basicFailTest() {
+        val factory = ParserFactory<Char, LineInput<Char>>()
+        val parser = ParserRef<Char, LineInput<Char>, Element>(factory)
+        parser.set(EParser().pLeaf)
+        val input = LineInput.of(text1.iterator())
+        val result = parser.parse(input)
+        assertTrue(result is Either.Left)
     }
 
     @Test
     fun singleTest() {
-        val input = Input.create(text1.iterator())
-//        val result = runBlocking { parser.parseAsync(input) }
-        val x = parser.parse(input)
-//        val expected = if (result is Either.Left) result.a.expected() else ""
-        assertTrue(x is Either.Right)
+        val input = LineInput.of(text1.iterator())
+        val result = parser.parse(input)
+        assertTrue(result is Either.Right)
     }
 
     @Test
-    fun doubleTest() {
-        val input = Input.create(text2.iterator())
-//        val result = runBlocking { parser.parseAsync(input) }
-        val x = parser.parse(input)
-//        val expected = if (result is Either.Left) result.a.expected() else ""
-        assertTrue(x is Either.Right)
+    fun complexTest() {
+        val input = LineInput.of(text2.iterator())
+        val result = parser.parse(input)
+        assertTrue(result is Either.Right)
+    }
+
+    @Test
+    fun complexFailTest() {
+        val input = LineInput.of(text3.iterator())
+        val result = parser.parse(input)
+        assertTrue(result is Either.Left)
     }
 }

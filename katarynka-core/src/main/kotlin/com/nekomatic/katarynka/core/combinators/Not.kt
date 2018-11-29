@@ -26,24 +26,25 @@
 
 package com.nekomatic.katarynka.core.combinators
 
-import arrow.core.Either
 import arrow.core.left
+import arrow.data.NonEmptyList
+import com.nekomatic.katarynka.core.IParser
+import com.nekomatic.katarynka.core.ParserFactory
 import com.nekomatic.katarynka.core.input.IInput
-import com.nekomatic.katarynka.core.parsers.AnyParser
-import com.nekomatic.katarynka.core.parsers.Parser
+import com.nekomatic.katarynka.core.parserResult
 import com.nekomatic.katarynka.core.result.Failure
-import com.nekomatic.katarynka.core.result.Success
-
 
 /**
  *
- * @receiver Parser<TItem, TIn, A>
- * @return Parser<TItem, TIn, TItem>
+ * @receiver IParser<TItem, TIn, A>
+ * @return IParser<TItem, TIn, TItem>
  */
-fun <TItem, TIn, A> Parser<TItem, TIn, A>.not(): Parser<TItem, TIn, TItem> where TIn : IInput<TItem, TIn> =
-        Parser(
+fun <TItem, TIn, A> IParser<TItem, TIn, A>.not(): IParser<TItem, TIn, TItem> where TIn : IInput<TItem, TIn> =
+        this.factory.parser(
                 name = name,
-                parserFunction = fun(input: TIn, n: String): Either<Failure<TItem, TIn>, Success<TItem, TIn, out TItem>> =
-                        if (this.parse(input).isRight()) Failure(n, input, input).left()
-                        else AnyParser<TItem, TIn>(n).parse(input)
+                parserFunction = fun(input: TIn, n: String, fact: ParserFactory<TItem, TIn>): parserResult<TItem, TIn, out TItem> =
+                        when {
+                            this.parse(input, fact).isRight() -> NonEmptyList.of(Failure(n, input)).left()
+                            else -> this.factory.any(n).parse(input, fact)
+                        }
         )

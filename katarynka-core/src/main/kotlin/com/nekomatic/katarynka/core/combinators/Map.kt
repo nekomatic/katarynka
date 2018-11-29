@@ -26,16 +26,17 @@
 
 package com.nekomatic.katarynka.core.combinators
 
+import com.nekomatic.katarynka.core.IParser
 import com.nekomatic.katarynka.core.input.IInput
-import com.nekomatic.katarynka.core.parsers.Parser
 import com.nekomatic.katarynka.core.result.map
 
 
+//TODO: wrap the f into a Try
 /**
  *
- * @receiver Parser<TItem, TIn, A>
+ * @receiver IParser<TItem, TIn, A>
  * @param f (A) -> B
- * @return Parser<TItem, TIn, B>
+ * @return IParser<TItem, TIn, B>
  */
-infix fun <TItem, TIn, A, B> Parser<TItem, TIn, A>.map(f: (A) -> B): Parser<TItem, TIn, B> where TIn : IInput<TItem, TIn> =
-        Parser(name) { input, _ -> this.parse(input).map { s -> s.map(f) } }
+infix fun <TItem, TIn, A, B> IParser<TItem, TIn, A>.sMap(f: (A) -> B): IParser<TItem, TIn, B> where TIn : IInput<TItem, TIn> =
+        this.factory.parser(this.name) { input, _, fact -> this.parse(input, fact).map { s -> s map (f) } }

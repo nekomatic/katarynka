@@ -29,13 +29,14 @@ package com.nekomatic.katarynka.core.result
 
 import com.nekomatic.katarynka.core.input.IInput
 
+//TODO: wrap the f into a Try
 /**
  *
  * @receiver Success<TItem, TIn, A>
  * @param f (A) -> B
  * @return Success<TItem, TIn, B>
  */
-fun <TItem, TIn, A, B> Success<TItem, TIn, A>.map(f: (A) -> B) where TIn : IInput<TItem, TIn> =
+infix fun <TItem, TIn, A, B> Success<TItem, TIn, A>.map(f: (A) -> B) where TIn : IInput<TItem, TIn> =
         Success(
                 value = f(this.value),
                 startingInput = this.startingInput,

@@ -1,7 +1,7 @@
 /*******************************************************************************
  * The MIT License
  *
- * Copyright (c) 2018 nekomatic.
+ * Copyright (c) 2018. nekomatic.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,21 +21,11 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  ******************************************************************************/
+@file:JvmName("Token")
 
-package com.nekomatic.katarynka.core.parsers
+package com.nekomatic.katarynka.chars
 
-import com.nekomatic.katarynka.core.input.IInput
-import com.nekomatic.katarynka.core.standardParserFunction
+import com.nekomatic.katarynka.core.combinators.optional
+import com.nekomatic.katarynka.core.combinators.surroundedBy
 
-/**
- *
- * @param TItem
- * @param TIn
- * @constructor
- */
-open class ItemParser<TItem, TIn>(name: String, item: TItem)
-    : Parser<TItem, TIn, TItem>(name, { input, n -> standardParserFunction(input, n) { it == item } })
-        where TIn : IInput<TItem, TIn> {
-    constructor(item: TItem) : this(item.toString(), item)
-}
-
+fun <A : Any> CParser<A>.token(whitespaces: CParser<*>): CParser<A> = this surroundedBy whitespaces.optional()

@@ -27,51 +27,17 @@
 
 package com.nekomatic.katarynka.core.combinators
 
-import arrow.core.Either
-import arrow.core.fix
-import arrow.instances.either.monad.monad
-import arrow.typeclasses.binding
+import com.nekomatic.katarynka.arrow.flatten
+import com.nekomatic.katarynka.core.IParser
 import com.nekomatic.katarynka.core.input.IInput
-import com.nekomatic.katarynka.core.parsers.Parser
-import com.nekomatic.katarynka.core.result.Failure
-import com.nekomatic.katarynka.core.result.Success
-
 
 /**
  *
- * @receiver Parser<TItem, TIn, A>
- * @param thatParser Parser<TItem, TIn, B>
- * @return Parser<TItem, TIn, A>
+ * @receiver IParser<TItem, TIn, A>
+ * @param that IParser<TItem, TIn, B>
+ * @return IParser<TItem, TIn, A>
  */
-infix fun <TItem, TIn, A, B> Parser<TItem, TIn, A>.surroundedBy(thatParser: Parser<TItem, TIn, B>): Parser<TItem, TIn, A>
-        where TIn : IInput<TItem, TIn> {
-    val thisParser = this
-    fun f(input: TIn): Either<Failure<TItem, TIn>, Success<TItem, TIn, A>> {
-        return Either
-                .monad<Failure<TItem, TIn>>()
-                .binding {
-                    val thatResultLeft = thatParser.parse(input).bind()
-                    val thisResult = thisParser.parse(thatResultLeft.remainingInput).bind()
-                    val thatResultRight = thatParser.parse(thisResult.remainingInput).bind()
-                    Success(
-                            value = thisResult.value,
-                            startingInput = input,
-                            remainingInput = thatResultRight.remainingInput,
-                            payload = { thatResultLeft.payload() + thisResult.payload() + thatResultRight.payload() }
-                    )
-                }
-                .fix()
-                .mapLeft {
-                    Failure(
-                            expected = it.expected,
-                            failedAtInput = it.failedAtInput,
-                            remainingInput = input
-                    )
-                }
-    }
+infix fun <TItem, TIn, A, B> IParser<TItem, TIn, A>.surroundedBy(that: IParser<TItem, TIn, B>): IParser<TItem, TIn, A> where TIn : IInput<TItem, TIn> =
+        that then this then that sMap { it.flatten().b }
 
-    return Parser(
-            name = this.name,
-            parserFunction = { input, _ -> f(input) })
-}
 
