@@ -26,15 +26,12 @@
 
 package com.nekomatic.katarynka.core.combinators
 
-import arrow.core.flatMap
-import arrow.core.left
-import arrow.core.right
+import arrow.core.*
 import arrow.data.NonEmptyList
 import com.nekomatic.katarynka.core.IParser
 import com.nekomatic.katarynka.core.input.IInput
-import com.nekomatic.katarynka.core.result.Failure
 
-//TODO: wrap the f into a Try
+//TODO: Move try result outside the parser result
 /**
  *
  * @receiver IParser<TItem, TIn, A>
@@ -45,9 +42,11 @@ infix fun <TItem, TIn, A> IParser<TItem, TIn, A>.onlyIf(f: (A) -> Boolean): IPar
         this.factory.parser(this.name) { input, n, fact ->
             this.parse(input, fact)
                     .flatMap { success ->
+                        val t = Try { f(success.value) }
                         when {
-                            f(success.value) -> success.right()
-                            else -> NonEmptyList.of(Failure(n, input)).left()
+                            t is Success && t.value -> success.right()
+                            t is Try.Failure -> NonEmptyList.of(com.nekomatic.katarynka.core.result.Failure(t.exception.toString(), input)).left()
+                            else -> NonEmptyList.of(com.nekomatic.katarynka.core.result.Failure(n, input)).left()
                         }
                     }
         }

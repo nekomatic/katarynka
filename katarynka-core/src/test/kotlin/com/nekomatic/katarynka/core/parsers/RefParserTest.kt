@@ -32,8 +32,11 @@ import com.nekomatic.katarynka.core.combinators.sMap
 import com.nekomatic.katarynka.core.combinators.then
 import com.nekomatic.katarynka.core.combinators.toNamedParser
 import com.nekomatic.katarynka.core.input.LineInput
+import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertAll
+import kotlin.test.assertEquals
 
 
 sealed class Element(val name: String)
@@ -62,11 +65,55 @@ class EParser {
 
 internal class RefParserTest {
 
-    private val text0 = "1".toList()
-    private val text1 = "[1]".toList()
-    private val text2 = "[[[[[[[[[1]]]]]]]]]".toList()
-    private val text3 = "[[_]]".toList()
+    private val text0 = "1"
+    private val text1 = "[1]"
+    private val text2 = "[[[[[[[[[1]]]]]]]]]"
+    private val text3 = "[[_]]"
+    private val textA = "a"
+    private val textB = "b"
     private val parser = EParser().elementParser
+
+    @Test
+    fun refCreationTest() {
+        val factory = ParserFactory<Char, LineInput<Char>>()
+        val ref = factory.ref<Char>()
+        val referencedA = factory.item('a')
+        val referencedB = factory.item('b')
+        val setA = ref.set(referencedA)
+        val setB = ref.set(referencedB)
+        val inputA = LineInput.of(textA.iterator())
+        val inputB = LineInput.of(textB.iterator())
+
+        assertAll(
+                { assertEquals("a", setA.name) },
+                { assertEquals("a", setB.name) },
+                { assertEquals("a", ref.name) },
+                { assertTrue(ref.parse(inputA) is Either.Right) },
+                { assertTrue(setA.parse(inputA) is Either.Right) },
+                { assertTrue(setB.parse(inputA) is Either.Right) },
+                { assertFalse(ref.parse(inputB) is Either.Right) },
+                { assertFalse(setA.parse(inputB) is Either.Right) },
+                { assertFalse(setB.parse(inputB) is Either.Right) }
+        )
+    }
+
+    @Test
+    fun refCreationTestNoReturn() {
+        val factory = ParserFactory<Char, LineInput<Char>>()
+        val ref = factory.ref<Char>()
+        val referencedA = factory.item('a')
+        val referencedB = factory.item('b')
+        ref.set(referencedA)
+        ref.set(referencedB)
+        val inputA = LineInput.of(textA.iterator())
+        val inputB = LineInput.of(textB.iterator())
+
+        assertAll(
+                { assertEquals("a", ref.name) },
+                { assertTrue(ref.parse(inputA) is Either.Right) },
+                { assertFalse(ref.parse(inputB) is Either.Right) }
+        )
+    }
 
     @Test
     fun basicTest() {

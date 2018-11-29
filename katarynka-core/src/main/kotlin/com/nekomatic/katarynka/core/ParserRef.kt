@@ -31,7 +31,7 @@ import arrow.core.Some
 import arrow.core.some
 import com.nekomatic.katarynka.core.input.IInput
 
-//TODO: validate reference parser
+//TODO: add negative tests
 class ParserRef<TItem, TIn, A>(override val factory: ParserFactory<TItem, TIn>) : IParser<TItem, TIn, A>
         where TIn : IInput<TItem, TIn> {
 
@@ -51,10 +51,10 @@ class ParserRef<TItem, TIn, A>(override val factory: ParserFactory<TItem, TIn>) 
         }
     }
 
-    override val name: String = ""
-
-
-    override val parserFunction: ParserFunction<TItem, TIn, A> = factory.failing<A>("").parserFunction
+    override val name: String by lazy {
+        synchronized(innerParser)
+        { if (innerParser is None) "Reference parser not initialised" else parser.name }
+    }
 
     override fun parse(input: TIn): parserResult<TItem, TIn, out A> = parse(input, factory)
 
@@ -62,5 +62,3 @@ class ParserRef<TItem, TIn, A>(override val factory: ParserFactory<TItem, TIn>) 
 
     private var innerParser: Option<IParser<TItem, TIn, A>> = None
 }
-
-

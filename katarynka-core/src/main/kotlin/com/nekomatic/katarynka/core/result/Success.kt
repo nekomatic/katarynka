@@ -27,7 +27,6 @@ package com.nekomatic.katarynka.core.result
 import arrow.core.Option
 import com.nekomatic.katarynka.core.input.IInput
 
-//TODO: wrap payload in an option
 
 /**
  *

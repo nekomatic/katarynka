@@ -37,6 +37,3 @@ typealias CFailure = Failure<Char, CInput>
 typealias CResult<A> = Either<NonEmptyList<CFailure>, CSuccess<A>>
 typealias CParser<A> = IParser<Char, CInput, A>
 
-interface ICParser<A> : IParser<Char, CInput, A> {
-    override val factory: CFactory
-}

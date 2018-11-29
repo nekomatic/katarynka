@@ -39,7 +39,7 @@ import com.nekomatic.katarynka.core.input.IInput
 class Parser<TItem, TIn, TVal>(
         override val name: String,
         override val factory: ParserFactory<TItem, TIn>,
-        override val parserFunction: ParserFunction<TItem, TIn, TVal>) : IParser<TItem, TIn, TVal> where TIn : IInput<TItem, TIn> {
+        val parserFunction: ParserFunction<TItem, TIn, TVal>) : IParser<TItem, TIn, TVal> where TIn : IInput<TItem, TIn> {
 
 
     override fun parse(input: TIn, factory: ParserFactory<TItem, TIn>): parserResult<TItem, TIn, out TVal> {

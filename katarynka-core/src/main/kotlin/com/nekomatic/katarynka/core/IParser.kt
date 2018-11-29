@@ -14,7 +14,7 @@ import com.nekomatic.katarynka.core.input.IInput
 interface IParser<TItem, TIn, TVal> where TIn : IInput<TItem, TIn> {
     val name: String
     val factory: ParserFactory<TItem, TIn>
-    val parserFunction: ParserFunction<TItem, TIn, TVal>
+    //val parserFunction: ParserFunction<TItem, TIn, TVal>
     fun parse(input: TIn): parserResult<TItem, TIn, out TVal>
     fun parse(input: TIn, factory: ParserFactory<TItem, TIn>): parserResult<TItem, TIn, out TVal>
 }
