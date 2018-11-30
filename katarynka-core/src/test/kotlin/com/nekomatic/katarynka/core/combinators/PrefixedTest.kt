@@ -27,7 +27,6 @@ package com.nekomatic.katarynka.core.combinators
 import arrow.core.Either
 import arrow.core.some
 import arrow.data.NonEmptyList
-import com.nekomatic.katarynka.core.ParserFactory
 import com.nekomatic.katarynka.core.input.LineInput
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
@@ -44,9 +43,24 @@ internal class PrefixedTest {
     private val textAXCDE = "axcde"
     private val textAXCDX = "axcdx"
 
-    private val factory = ParserFactory<Char, LineInput<Char>>()
-    private val parserAB = "ab".map { factory.item(it) }.toNelUnsafe().sequence() sMap { c -> c.joinToString("") }
-    private val parserCDE = "cde".map { factory.item(it) }.toNelUnsafe().sequence() sMap { c -> c.joinToString("") }
+
+    private val parserAB =
+            TestBuilder {
+                "ab".map { item(it) }
+                        .toNelUnsafe()
+                        .sequence() sMap {
+                    it.joinToString("")
+                }
+            }.build()
+
+    private val parserCDE =
+            TestBuilder {
+                "cde".map { item(it) }
+                        .toNelUnsafe()
+                        .sequence() sMap {
+                    it.joinToString("")
+                }
+            }.build()
     private val parser = parserCDE prefixedBy parserAB
 
 
@@ -77,7 +91,7 @@ internal class PrefixedTest {
         )
     }
 
-    @DisplayName("Non-matching input of the item parser")
+    @DisplayName("Non-matching input of the item Builder")
     @Test
     fun nonMatchingItemInput() {
         val input = LineInput.of(textABCDX.iterator())
@@ -92,7 +106,7 @@ internal class PrefixedTest {
         )
     }
 
-    @DisplayName("Non-matching input of the prefix parser")
+    @DisplayName("Non-matching input of the prefix Builder")
     @Test
     fun nonMatchingPrefixInput() {
         val input = LineInput.of(textAXCDE.iterator())

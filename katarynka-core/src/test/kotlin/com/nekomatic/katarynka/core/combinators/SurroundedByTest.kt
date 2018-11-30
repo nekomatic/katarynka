@@ -27,7 +27,6 @@ package com.nekomatic.katarynka.core.combinators
 import arrow.core.Either
 import arrow.core.some
 import arrow.data.NonEmptyList
-import com.nekomatic.katarynka.core.ParserFactory
 import com.nekomatic.katarynka.core.input.LineInput
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
@@ -38,7 +37,7 @@ import org.junit.jupiter.api.assertAll
 internal class SurroundedByTest {
 
     fun <T> List<T>.toNelUnsafe() = NonEmptyList.fromListUnsafe(this)
-    private val factory = ParserFactory<Char, LineInput<Char>>()
+
     private val textA = "a"
     private val textABCDEAB = "abcdeab"
     private val textABCDXAB = "abcdxab"
@@ -46,8 +45,20 @@ internal class SurroundedByTest {
     private val textABCDEAX = "abcdeax"
     private val textAXCDXAC = "axcdxax"
 
-    private val parserAB = "ab".map { factory.item(it) }.toNelUnsafe().sequence() sMap { c -> c.joinToString("") }
-    private val parserCDE = "cde".map { factory.item(it) }.toNelUnsafe().sequence() sMap { c -> c.joinToString("") }
+    private val parserAB = TestBuilder {
+        "ab".map { item(it) }
+                .toNelUnsafe()
+                .sequence() sMap {
+            it.joinToString("")
+        }
+    }.build()
+    private val parserCDE = TestBuilder {
+        "cde".map { item(it) }
+                .toNelUnsafe()
+                .sequence() sMap {
+            it.joinToString("")
+        }
+    }.build()
     private val parser = parserCDE surroundedBy parserAB
 
 
@@ -78,7 +89,7 @@ internal class SurroundedByTest {
         )
     }
 
-    @DisplayName("Non-matching input of the item parser")
+    @DisplayName("Non-matching input of the item Builder")
     @Test
     fun nonMatchingItemInput() {
         val input = LineInput.of(textABCDXAB.iterator())
@@ -93,7 +104,7 @@ internal class SurroundedByTest {
         )
     }
 
-    @DisplayName("Non-matching input of the prefix parser")
+    @DisplayName("Non-matching input of the prefix Builder")
     @Test
     fun nonMatchingPrefixInput() {
         val input = LineInput.of(textAXCDEAB.iterator())
@@ -108,7 +119,7 @@ internal class SurroundedByTest {
         )
     }
 
-    @DisplayName("Non-matching input of the suffix parser")
+    @DisplayName("Non-matching input of the suffix Builder")
     @Test
     fun nonMatchingSuffixInput() {
         val input = LineInput.of(textABCDEAX.iterator())

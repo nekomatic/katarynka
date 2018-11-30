@@ -25,7 +25,6 @@
 package com.nekomatic.katarynka.core.combinators
 
 import arrow.core.Either
-import com.nekomatic.katarynka.core.ParserFactory
 import com.nekomatic.katarynka.core.input.LineInput
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
@@ -43,9 +42,15 @@ internal class ListWithSeparatorTest {
     private val noMatchFirst = "b,a,a,a,"
     private val itemSameAsSeparator = "aaaaaaaaa"
 
-    private val factory = ParserFactory<Char, LineInput<Char>>()
-    private val parser = factory.item('a') listWithSeparator factory.item(',')
-    private val parserItemSameAsSeparator = factory.item('a') listWithSeparator factory.item('a')
+
+    private val parser =
+            TestBuilder {
+                item('a') listWithSeparator item(',')
+            }.build()
+    private val parserItemSameAsSeparator =
+            TestBuilder {
+                item('a') listWithSeparator item('a')
+            }.build()
 
     @DisplayName("Single item match")
     @Test

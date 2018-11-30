@@ -1,7 +1,6 @@
 package com.nekomatic.katarynka.core.combinators
 
 import arrow.core.Either
-import com.nekomatic.katarynka.core.ParserFactory
 import com.nekomatic.katarynka.core.input.LineInput
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.DisplayName
@@ -13,8 +12,10 @@ internal class OneOrMoreTest {
     private val textA = "a"
     private val textAAB = "aab"
     private val textB = "b"
-    private val factory = ParserFactory<Char, LineInput<Char>>()
-    private val parser = factory.item('a').oneOrMore()
+
+    private val parser = TestBuilder {
+        item('a').oneOrMore()
+    }.build()
 
 
     @DisplayName("Empty input")

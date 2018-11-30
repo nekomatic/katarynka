@@ -3,7 +3,6 @@ package com.nekomatic.katarynka.core.combinators
 import arrow.core.Either
 import arrow.core.None
 import arrow.core.Some
-import com.nekomatic.katarynka.core.ParserFactory
 import com.nekomatic.katarynka.core.input.LineInput
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.DisplayName
@@ -14,8 +13,10 @@ internal class OptionalTest {
     private val text0 = ""
     private val textA = "a"
     private val textB = "b"
-    private val factory = ParserFactory<Char, LineInput<Char>>()
-    private val parser = factory.item('a').optional()
+
+    private val parser = TestBuilder {
+        item('a').optional()
+    }.build()
 
 
     @DisplayName("Empty input")

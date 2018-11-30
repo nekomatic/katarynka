@@ -3,7 +3,6 @@ package com.nekomatic.katarynka.chars.combinators
 import arrow.core.Either
 import arrow.data.NonEmptyList
 import com.nekomatic.katarynka.chars.*
-import com.nekomatic.katarynka.core.of
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.DisplayName
@@ -18,7 +17,10 @@ internal class TokenTest {
     private val textABCD4 = "abcde".toList()
     private val textAB_D = " ab_d e".toList()
 
-    private val parser = CFactory().of { it.string("abcd").token(it.WS) }
+    private val parser =
+            CBuilder {
+                string("abcd") tokenBetween WS
+            }.build()
 
     @Suppress("UNCHECKED_CAST")
     @DisplayName("Matching sequence with WS on the left side")

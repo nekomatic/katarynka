@@ -26,7 +26,6 @@ package com.nekomatic.katarynka.core.combinators
 
 import arrow.core.Either
 import arrow.data.NonEmptyList
-import com.nekomatic.katarynka.core.ParserFactory
 import com.nekomatic.katarynka.core.input.LineInput
 import com.nekomatic.katarynka.core.parserResult
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -38,11 +37,18 @@ import org.junit.jupiter.api.assertAll
 internal class SequenceTest {
 
     fun <T> List<T>.toNelUnsafe() = NonEmptyList.fromListUnsafe(this)
-    private val factory = ParserFactory<Char, LineInput<Char>>()
+
     private val textABCD = "abcde"
     private val textAB_D = "abc_de"
 
-    private val parser = "abcd".map { factory.item(it) }.toNelUnsafe().sequence() sMap { c -> c.joinToString("") }
+    private val parser =
+            TestBuilder {
+                "abcd".map { item(it) }
+                        .toNelUnsafe()
+                        .sequence() sMap {
+                    it.joinToString("")
+                }
+            }.build()
 
 
     @DisplayName("Matching sequence")

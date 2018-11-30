@@ -22,33 +22,21 @@
  * THE SOFTWARE.
  ******************************************************************************/
 
-package com.nekomatic.katarynka.chars
+package com.nekomatic.katarynka.core.combinators
 
-import arrow.core.getOrElse
-import arrow.data.NonEmptyList
+import com.nekomatic.katarynka.core.Builder
+import com.nekomatic.katarynka.core.IParser
 import com.nekomatic.katarynka.core.ParserFactory
-import com.nekomatic.katarynka.core.combinators.*
+import com.nekomatic.katarynka.core.input.LineInput
 
-
-class CFactory(keepPayload: Boolean = true) : ParserFactory<Char, CInput>(keepPayload) {
-
-    object eol
-
-    fun char(c: Char) = this.item(c)
-    val WS = this.match("whitespace") { it.isWhitespace() }
-    val WSs = (this.WS.oneOrMore() toNamedParser "whitespaces")
-    val DIGIT = this.match("digit") { it.isDigit() }
-    val LETTER_OR_DIGIT = this.match("letter or digit") { it.isLetterOrDigit() }
-
-    val LOWERCASE_CHAR = this.match("lowercase letter") { it.isLowerCase() }
-    val UPPERCASE_CHAR = this.match("uppercase letter") { it.isUpperCase() }
-    val LETTER = this.match("letter") { it.isLetter() }
-    val EOL = ((char('\r') then char('\n')).toConst(eol)
-            orElse (char('\n').toConst(eol))
-            orElse (char('\r')).toConst(eol)) toNamedParser "end of line"
-
-    fun string(value: String) = NonEmptyList.fromList(value.toList().map { char(it) })
-            .map { it.sequence().sMap { it.joinToString("") } }
-            .getOrElse { this.successful().toConst("") }
-}
+/**
+ *
+ * @param TVal
+ * @constructor
+ */
+class TestBuilder<TVal>(block: ParserFactory<Char, LineInput<Char>>.() -> IParser<Char, LineInput<Char>, TVal>) :
+        Builder<Char, LineInput<Char>, TVal, ParserFactory<Char, LineInput<Char>>>(
+                factory = ParserFactory(),
+                block = block
+        )
 

@@ -2,7 +2,6 @@ package com.nekomatic.katarynka.core.combinators
 
 import arrow.core.Either
 import arrow.data.NonEmptyList
-import com.nekomatic.katarynka.core.ParserFactory
 import com.nekomatic.katarynka.core.input.LineInput
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.DisplayName
@@ -13,8 +12,13 @@ internal class OnlyIfTest {
     private val textEmpty = ""
     private val text0 = "0"
     private val text1 = "1"
-    private val factory = ParserFactory<Char, LineInput<Char>>()
-    private val parser = factory.match("non-zero digit") { it.isDigit() } onlyIf { it != '0' }
+    private val parser = TestBuilder {
+        match("non-zero digit") {
+            it.isDigit()
+        } onlyIf {
+            it != '0'
+        }
+    }.build()
 
     @DisplayName("Empty input")
     @Test

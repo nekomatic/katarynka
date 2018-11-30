@@ -12,7 +12,11 @@ internal class NotTest {
     private val textA = "a"
     private val textB = "b"
     private val factory = ParserFactory<Char, LineInput<Char>>()
-    private val parser = factory.item('a').not()
+
+
+    private val parser = TestBuilder {
+        item('a').not()
+    }.build()
 
     @DisplayName("Matching input")
     @Test

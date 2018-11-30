@@ -33,7 +33,7 @@ import com.nekomatic.katarynka.core.input.IInput
  * @param TVal
  * @property name String
  * @property factory ParserFactory<TItem, TIn>
- * @property parserFunction Function2<TIn, String, Either<NonEmptyList<Failure<TItem, TIn>>, Success<TItem, TIn, out TVal>>>
+ * @property parserFunction Function3<TIn, String, [@kotlin.ParameterName] ParserFactory<TItem, TIn>, Either<NonEmptyList<Failure<TItem, TIn>>, Success<TItem, TIn, out TVal>>>
  * @constructor
  */
 class Parser<TItem, TIn, TVal>(

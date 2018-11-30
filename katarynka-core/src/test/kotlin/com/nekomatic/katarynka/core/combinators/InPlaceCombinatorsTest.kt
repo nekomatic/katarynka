@@ -2,7 +2,6 @@ package com.nekomatic.katarynka.core.combinators
 
 import arrow.core.Either
 import arrow.data.NonEmptyList
-import com.nekomatic.katarynka.core.ParserFactory
 import com.nekomatic.katarynka.core.input.LineInput
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.DisplayName
@@ -13,8 +12,9 @@ internal class InPlaceCombinatorsTest {
 
     private val textA = "a"
     private val textB = "b"
-    private val factory = ParserFactory<Char, LineInput<Char>>()
-    private val parser = factory.item('a')
+    private val parser = TestBuilder {
+        item('a')
+    }.build()
 
 
     @DisplayName("Map combinator")

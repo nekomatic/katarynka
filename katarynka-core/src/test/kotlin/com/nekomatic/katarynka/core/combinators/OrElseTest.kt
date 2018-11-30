@@ -65,7 +65,7 @@ internal class OrElseTest {
         )
     }
 
-    @DisplayName("Matching input, first parser only")
+    @DisplayName("Matching input, first Builder only")
     @Test
     fun matchingInputToFirst() {
         val input = LineInput.of(textABCDE.iterator())
@@ -77,7 +77,7 @@ internal class OrElseTest {
         )
     }
 
-    @DisplayName("Matching input, second parser only")
+    @DisplayName("Matching input, second Builder only")
     @Test
     fun matchingInputToSecond() {
         val input = LineInput.of(textABCDE.iterator())

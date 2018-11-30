@@ -1,7 +1,6 @@
 package com.nekomatic.katarynka.core.combinators
 
 import arrow.core.Either
-import com.nekomatic.katarynka.core.ParserFactory
 import com.nekomatic.katarynka.core.input.LineInput
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.DisplayName
@@ -10,13 +9,14 @@ import org.junit.jupiter.api.assertAll
 
 internal class ZeroOrMoreTest {
 
-    private val factory = ParserFactory<Char, LineInput<Char>>()
 
     private val text0 = "".toList()
     private val textA = "a".toList()
     private val textAAB = "aab".toList()
     private val textB = "b".toList()
-    private val parser = factory.item('a').zeroOrMore()
+    private val parser = TestBuilder {
+        item('a').zeroOrMore()
+    }.build()
 
     @DisplayName("Empty input")
     @Test

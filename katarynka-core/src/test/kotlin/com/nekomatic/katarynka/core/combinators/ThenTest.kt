@@ -4,7 +4,6 @@ import arrow.core.Either
 import arrow.core.Tuple2
 import arrow.core.some
 import arrow.data.NonEmptyList
-import com.nekomatic.katarynka.core.ParserFactory
 import com.nekomatic.katarynka.core.input.LineInput
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
@@ -15,15 +14,27 @@ import org.junit.jupiter.api.assertAll
 internal class ThenTest {
 
     fun <T> List<T>.toNelUnsafe() = NonEmptyList.fromListUnsafe(this)
-    private val factory = ParserFactory<Char, LineInput<Char>>()
+
     private val textA = "a"
     private val textABCDE = "abcde"
     private val textABCDX = "abcdx"
     private val textAXCDE = "axcde"
     private val textAXCDX = "axcdx"
 
-    private val parserAB = "ab".map { factory.item(it) }.toNelUnsafe().sequence() sMap { c -> c.joinToString("") }
-    private val parserCDE = "cde".map { factory.item(it) }.toNelUnsafe().sequence() sMap { c -> c.joinToString("") }
+    private val parserAB = TestBuilder {
+        "ab".map { item(it) }
+                .toNelUnsafe()
+                .sequence() sMap {
+            it.joinToString("")
+        }
+    }.build()
+    private val parserCDE = TestBuilder {
+        "cde".map { item(it) }
+                .toNelUnsafe()
+                .sequence() sMap {
+            it.joinToString("")
+        }
+    }.build()
     private val parser = parserAB then parserCDE
 
 
@@ -54,7 +65,7 @@ internal class ThenTest {
         )
     }
 
-    @DisplayName("Non-matching input of the second parser")
+    @DisplayName("Non-matching input of the second Builder")
     @Test
     fun nonMatchingSecondInput() {
         val input = LineInput.of(textABCDX.iterator())
@@ -69,7 +80,7 @@ internal class ThenTest {
         )
     }
 
-    @DisplayName("Non-matching input of the first parser")
+    @DisplayName("Non-matching input of the first Builder")
     @Test
     fun nonMatchingFirstInput() {
         val input = LineInput.of(textAXCDE.iterator())

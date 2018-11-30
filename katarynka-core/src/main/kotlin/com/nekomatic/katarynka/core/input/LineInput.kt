@@ -53,10 +53,10 @@ class LineInput<TItem> private constructor(
 
     companion object {
         /**
-         * Creates instance of the parser input with line counter enabled
+         * Creates instance of the builder input with line counter enabled
          * @param iterator Iterator<TItem>
-         * @param eolParser Parser<TItem, Input<TItem>, Long> parser used to detect the end of line.
-         * The returned value shoul dintcate the ddistance from the current item to the last item of the line break sequence
+         * @param eolParser Parser<TItem, Input<TItem>, Long> builder used to detect the end of line.
+         * The returned value should indicate the distance from the current item to the last item of the line break sequence
          * @return LineInput<TItem>
          */
         fun <TItem> of(iterator: Iterator<TItem>, eolParser: IParser<TItem, Input<TItem>, Long>): LineInput<TItem> =
@@ -67,7 +67,7 @@ class LineInput<TItem> private constructor(
                 )
 
         /**
-         * Creates instance of the parser input with line counter disabled
+         * Creates instance of the builder input with line counter disabled
          * @param iterator Iterator<TItem>
          * @return LineInput<TItem>
          */

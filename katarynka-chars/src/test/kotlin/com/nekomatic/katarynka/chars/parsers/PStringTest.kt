@@ -14,7 +14,10 @@ internal class PStringTest {
     private val textABCD = "abcde".toList()
     private val textAB_D = "ab_de".toList()
 
-    private val parser = CFactory().string("abcd")
+    private val parser =
+            CBuilder {
+                string("abcd")
+            }.build()
 
     @Suppress("UNCHECKED_CAST")
     @DisplayName("Matching sequence")

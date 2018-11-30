@@ -9,7 +9,6 @@ import kotlin.test.assertEquals
 
 internal class CInputTest {
 
-
     private val text0 = ""
     private val text1 = "a"
     private val text2 = "ab"

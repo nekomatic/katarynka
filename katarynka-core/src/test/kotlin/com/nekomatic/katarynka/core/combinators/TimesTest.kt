@@ -26,7 +26,6 @@ package com.nekomatic.katarynka.core.combinators
 
 import arrow.core.Either
 import arrow.data.NonEmptyList
-import com.nekomatic.katarynka.core.ParserFactory
 import com.nekomatic.katarynka.core.input.LineInput
 import com.nekomatic.katarynka.core.parserResult
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -37,13 +36,21 @@ import org.junit.jupiter.api.Test
 @ExperimentalUnsignedTypes
 internal class TimesTest {
 
-    private val factory = ParserFactory<Char, LineInput<Char>>()
+
     private val textAAAA = "aaaaa"
     private val textAAAB = "aaabc"
     private val textXYZ = "xyz"
 
-    private val parser4 = factory.item('a') times 4u sMap { it.joinToString("") }
-    private val parser0 = factory.item('a') times 0u sMap { it.joinToString("") }
+    private val parser4 = TestBuilder {
+        item('a') times 4u sMap {
+            it.joinToString("")
+        }
+    }.build()
+    private val parser0 = TestBuilder {
+        item('a') times 0u sMap {
+            it.joinToString("")
+        }
+    }.build()
 
 
     @DisplayName("Matching sequence")

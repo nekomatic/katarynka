@@ -1,6 +1,7 @@
 package com.nekomatic.katarynka.core.parsers
 
 import arrow.core.Either
+import com.nekomatic.katarynka.core.Builder
 import com.nekomatic.katarynka.core.ParserFactory
 import com.nekomatic.katarynka.core.input.LineInput
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -14,7 +15,12 @@ internal class AnyParserTest {
     private val text0 = ""
     private val text1 = "a"
     private val factory = ParserFactory<Char, LineInput<Char>>()
-    private val parser = factory.any("any")
+
+
+    private val parser = Builder(factory)
+    {
+        any("any")
+    }.build()
 
     @DisplayName("Empty input")
     @Test

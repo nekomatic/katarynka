@@ -28,4 +28,4 @@ package com.nekomatic.katarynka.chars
 import com.nekomatic.katarynka.core.combinators.optional
 import com.nekomatic.katarynka.core.combinators.surroundedBy
 
-fun <A : Any> CParser<A>.token(whitespaces: CParser<*>): CParser<A> = this surroundedBy whitespaces.optional()
+infix fun <A : Any> CParser<A>.tokenBetween(whitespaces: CParser<*>): CParser<A> = this surroundedBy whitespaces.optional()
