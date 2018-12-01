@@ -10,8 +10,8 @@
     <version>0.1-SNAPSHOT</version>
     <modules>
         <module>katarynka-core</module>
-        <!--<module>samples/samples-json</module>-->
         <module>katarynka-chars</module>
+        <module>katarynka-tokens</module>
     </modules>
 
 
