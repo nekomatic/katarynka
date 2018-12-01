@@ -338,3 +338,4 @@ flycheck_*.el
 
 .idea
 /samples/
+*.iml
