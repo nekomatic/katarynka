@@ -30,6 +30,7 @@ package com.nekomatic.katarynka.core.result
 import com.nekomatic.katarynka.core.input.IInput
 
 //TODO: wrap the f into a Try
+//TODO: Try is obsolete - replace with another construct
 /**
  * urn Success<TItem, TIn, B>
  */

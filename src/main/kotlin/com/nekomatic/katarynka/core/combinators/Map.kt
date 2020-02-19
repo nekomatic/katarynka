@@ -38,6 +38,7 @@ import com.nekomatic.katarynka.core.result.map
 
 
 //TODO: Move try result outside the parser result
+//TODO: Try is obsolete - replace with another construct
 /**
  *
  * @receiver IParser<TItem, TIn, A>

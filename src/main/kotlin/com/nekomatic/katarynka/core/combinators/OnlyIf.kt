@@ -32,6 +32,7 @@ import com.nekomatic.katarynka.core.IParser
 import com.nekomatic.katarynka.core.input.IInput
 
 //TODO: Move try result outside the parser result
+//TODO: Try is obsolete - replace with another construct
 /**
  *
  * @receiver IParser<TItem, TIn, A>
