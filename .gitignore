@@ -338,3 +338,6 @@ flycheck_*.el
 
 .idea
 /samples/
+
+/gradle
+/build
