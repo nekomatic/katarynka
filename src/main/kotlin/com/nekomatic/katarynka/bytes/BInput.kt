@@ -5,6 +5,6 @@ package com.nekomatic.katarynka.bytes
 
 import com.nekomatic.katarynka.core.input.Input
 
-typealias CInput = Input<Byte>
+typealias BInput = Input<Byte>
 
 
