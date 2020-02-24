@@ -30,7 +30,7 @@ import com.nekomatic.katarynka.core.ParserFactory
 import com.nekomatic.katarynka.core.combinators.*
 
 
-class CFactory(keepPayload: Boolean = true) : ParserFactory<Char, CInput>(keepPayload) {
+open class CFactory(keepPayload: Boolean = true) : ParserFactory<Char, CInput>(keepPayload) {
 
     object eol
 

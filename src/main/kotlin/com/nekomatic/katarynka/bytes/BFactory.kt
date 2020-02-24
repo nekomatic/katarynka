@@ -7,7 +7,7 @@ import com.nekomatic.katarynka.core.combinators.sMap
 import com.nekomatic.katarynka.core.combinators.sequence
 import com.nekomatic.katarynka.core.combinators.toConst
 
-class BFactory : ParserFactory<Byte, BInput>(keepPayload = false) {
+open class BFactory : ParserFactory<Byte, BInput>(keepPayload = false) {
     fun byte(b: Byte) = this.item(b)
     fun bytes(value: ByteArray) = NonEmptyList.fromList(value.toList().map { byte(it) })
         .map { it.sequence().sMap { it.toByteArray() } }

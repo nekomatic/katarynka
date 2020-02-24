@@ -37,3 +37,4 @@ typealias BFailure = Failure<Byte, BInput>
 typealias BResult<A> = Either<NonEmptyList<BFailure>, BSuccess<A>>
 typealias BParser<A> = IParser<Byte, BInput, A>
 
+fun <TVal : Any> BParser<TVal>.parse(bytes: ByteArray) = this.parse(BInput.of(bytes.iterator()))
